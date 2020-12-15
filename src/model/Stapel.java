@@ -36,6 +36,7 @@ public class Stapel {
         }
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
         this.upperContainer = new Container(stapel.getUpperContainer());
+        this.containerGraph = Graphs.copyOf(stapel.getContainerGraph());
     }
 
     public boolean addContainer(Container container) {

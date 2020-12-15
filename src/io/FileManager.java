@@ -31,7 +31,7 @@ public class FileManager {
         Yard yard;
         Map<Integer, Slot> slots = new HashMap<>();
         List<Container> tempContainers = new ArrayList<>();
-        List<Crane> craneList = new ArrayList<>();
+        Cranes craneList = new Cranes();
         List<Container> containers = new ArrayList<>();
         List<Row> rows = new ArrayList<>();
         List<String> strList;
@@ -84,11 +84,11 @@ public class FileManager {
             id = Integer.parseInt(strArr[0]);
             x = Integer.parseInt(strArr[1]);
             y = Integer.parseInt(strArr[2]);
-            craneList.add(new Crane(id, x, y));
+            craneList.addCrane(new Crane(id, x, y));
 
 
         }
-        yard.setCraneList(craneList);
+        yard.setCranes(craneList);
 
         /*  -------------------------------- CONTAINERS -------------------------------- */
         sc.nextLine();
@@ -130,7 +130,7 @@ public class FileManager {
                 pwOut.println(s);
             }
             pwOut.println("# kraanbewegingen (t,x,y)");
-            for (CraneMovement cm : yard.getCraneList().get(0).getMoves()) {
+            for (CraneMovement cm : yard.getCranes().getCranes().get(0).getMoves()) {
                 pwOut.println(cm);
             }
             logger.log(Level.INFO, "Output generated in " + file);

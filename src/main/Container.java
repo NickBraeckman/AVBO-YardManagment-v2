@@ -52,6 +52,12 @@ public class Container implements Comparable<Container>{
 
     }
 
+    public void setCenter(Coordinate2D coordinate){
+        this.startIndex = coordinate.x - getWc()/2;
+        this.stopIndex = coordinate.x + getWc()/2;
+        this.center = coordinate;
+    }
+
     @Override
     public int compareTo(Container o) {
         if (this.getHeight() > o.getHeight()){

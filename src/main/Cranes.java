@@ -3,6 +3,7 @@ package main;
 import lombok.Data;
 import move.CraneMovement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -11,6 +12,10 @@ import java.util.function.Consumer;
 @Data
 public class Cranes implements Iterable<Crane> {
     private List<Crane> cranes;
+
+    public Cranes(){
+        this.cranes = new ArrayList<>();
+    }
 
     @Override
     public Iterator<Crane> iterator() {
@@ -35,5 +40,9 @@ public class Cranes implements Iterable<Crane> {
      */
     public boolean canMove(Container c, Coordinate2D coordinate){
         return true;
+    }
+
+    public void addCrane(Crane crane){
+        cranes.add(crane);
     }
 }
