@@ -3,6 +3,7 @@ package io;
 import comparator.SortContainerByIncreasingHeight;
 import comparator.SortStapelsById;
 import main.*;
+import model.ScheduleState;
 import model.Stapel;
 import move.CraneMovement;
 
@@ -89,8 +90,10 @@ public class FileManager {
             y = Integer.parseInt(strArr[2]);
             d = Integer.parseInt(strArr[3]);  //delta
 
-            craneSchedule.addCrane(new Crane(id, x, y,d));
+            craneSchedule.addCrane(new Crane(id, x, y, d));
         }
+
+        yard.setCraneSchedule(craneSchedule);
 
 
 
@@ -134,11 +137,11 @@ public class FileManager {
             for (String s : printContainers(yard.getRowList())) {
                 pwOut.println(s);
             }
-            //TODO Romeo
-            /*pwOut.println("# kraanbewegingen (t,x,y)");
-            for (CraneMovement cm : yard.getCraneList().get(0).getMoves()) {
-                pwOut.println(cm);
-            }*/
+            pwOut.println("# kraanbewegingen (t,x,y)");
+            for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
+                pwOut.println(ss); //TODO Romeo
+            }
+
             logger.log(Level.INFO, "Output generated in " + file);
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,9 +153,9 @@ public class FileManager {
         List<String> temp = new ArrayList<>();
 
         for (Row row : rows) {
-            Collections.sort(row.getStapels(),new SortStapelsById());
+            Collections.sort(row.getStapels(), new SortStapelsById());
             for (Stapel stapel : row.getStapels()) {
-                Collections.sort(stapel.getContainerList(),new SortContainerByIncreasingHeight());
+                Collections.sort(stapel.getContainerList(), new SortContainerByIncreasingHeight());
                 for (Container container : stapel.getContainerList()) {
                     StringBuilder strb = new StringBuilder();
                     strb.append(container.getId());

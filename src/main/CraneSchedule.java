@@ -1,6 +1,7 @@
 package main;
 
 import lombok.Data;
+import model.ScheduleState;
 import move.CraneMovement;
 
 import java.util.ArrayList;
@@ -10,27 +11,15 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 @Data
-public class CraneSchedule implements Iterable<Crane> {
+public class CraneSchedule {
     private List<Crane> cranes;
+
+
+    private List<ScheduleState> timeline;
 
 
     public CraneSchedule() {
         cranes = new ArrayList<>(2);
-    }
-
-    @Override
-    public Iterator<Crane> iterator() {
-        return null;
-    }
-
-    @Override
-    public void forEach(Consumer<? super Crane> action) {
-
-    }
-
-    @Override
-    public Spliterator<Crane> spliterator() {
-        return null;
     }
 
     /**
@@ -47,6 +36,13 @@ public class CraneSchedule implements Iterable<Crane> {
 
     public void addCrane(Crane crane) {
         this.cranes.add(crane);
+        addState(0, crane);
+    }
+
+
+    private void addState(int t, Crane crane) {
+
+        timeline.add(new ScheduleState(t, crane));
     }
 
 }
