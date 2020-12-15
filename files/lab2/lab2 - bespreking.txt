@@ -1,4 +1,4 @@
-public class Yard{
+Crane{
 	public void reoderConatainers(){
 		while (!yard.isSafe()){
 			Container c = yard.findWrong()
@@ -39,7 +39,7 @@ public class Yard{
 	}
 }
 
-public class Container{
+ Container{
 
 	public Set<Slot> getSlots(){
 		//...
@@ -51,7 +51,7 @@ public class Container{
 	}
 }
 
-public class Crane{
+ Crane{
 
 	public void moveSafe(Container container){
 
@@ -105,4 +105,4 @@ public zoekPlaats(int orde){
 		}
 	}
 	zoekPlaats(orde++);
-}
+
