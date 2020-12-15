@@ -20,6 +20,8 @@ public class Container implements Comparable<Container>{
         this.Lc = Lc;
         this.Gc = Gc;
         this.height = 1;
+        this.center = new Coordinate2D(-1,-1);
+        this.origin = new Coordinate2D(-1,-1);
     }
 
     public Container(Container container) {
@@ -29,6 +31,8 @@ public class Container implements Comparable<Container>{
         this.height = container.getHeight();
         this.center = new Coordinate2D(container.getCenter());
         this.origin = new Coordinate2D(container.getOrigin());
+        this.startIndex = container.getStartIndex();
+        this.stopIndex = container.getStopIndex();
     }
 
     public List<Integer> getSlotIds(){

@@ -24,10 +24,11 @@ public class ReorderStrategy implements Strategy {
         for (Row row : yard.getRowList()){
             for (Stapel stapel : row.getStapels()){
                 if (!checkSafetyConstraints(stapel)){
-                    resolutionPool.add(stapel);
+                    resolutionPool.add(new Stapel(stapel));
                 }
             }
         }
+
         System.out.println(resolutionPool);
         reorderHelper(resolutionPool,0,0,0,0);
         return null;
@@ -60,10 +61,9 @@ public class ReorderStrategy implements Strategy {
             reorderHelper(resolutionPool, row, slot, sIndex, cIndex);
         }
 
+        if (stapel.getUpperContainer().getGc() == 1){
 
-
-
-
+        }
 
         return false;
     }

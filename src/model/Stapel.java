@@ -1,11 +1,13 @@
 package model;
 
 import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import comparator.SortContainerByDecreasingHeight;
 import lombok.Data;
 import main.Container;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,16 @@ public class Stapel {
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
         containerGraph = GraphBuilder.undirected().allowsSelfLoops(false).build();
         this.upperContainer = containers.get(0);
+    }
+
+    public Stapel(Stapel stapel){
+        this.id = stapel.id;
+        this.containerList = new ArrayList<>();
+        for (Container container : stapel.getContainerList()){
+            containerList.add(new Container(container));
+        }
+        Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
+        this.upperContainer = new Container(stapel.getUpperContainer());
     }
 
     public boolean addContainer(Container container) {

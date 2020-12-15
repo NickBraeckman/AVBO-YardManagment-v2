@@ -8,9 +8,14 @@ import lombok.Data;
 public class Coordinate2D {
     int x, y;
 
+    public Coordinate2D(){
+        this.x = -1;
+        this.y = -1;
+    }
+
     public Coordinate2D(Coordinate2D p) {
-        this.x = p.x;
-        this.y = p.y;
+        this.x = p.getX();
+        this.y = p.getY();
     }
 
     public int getManhattanDistance(Coordinate2D c) {
