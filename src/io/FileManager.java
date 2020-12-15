@@ -3,9 +3,7 @@ package io;
 import comparator.SortContainerByIncreasingHeight;
 import comparator.SortStapelsById;
 import main.*;
-import model.ScheduleState;
 import model.Stapel;
-import move.CraneMovement;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +27,7 @@ public class FileManager {
         int Lc, Gc, id, x, y;
 
         /*  -------------------------------- PROJECT VARIABLES -------------------------------- */
-        Yard yard;
+        Yard  yard;
         Map<Integer, Slot> slots = new HashMap<>();
         List<Container> tempContainers = new ArrayList<>();
         List<Crane> craneList = new ArrayList<>();
@@ -137,10 +135,10 @@ public class FileManager {
             for (String s : printContainers(yard.getRowList())) {
                 pwOut.println(s);
             }
-            pwOut.println("# kraanbewegingen (t,x,y)");
+        /*    pwOut.println("# kraanbewegingen (t,x,y)");
             for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
                 pwOut.println(ss); //TODO Romeo
-            }
+            }*/
 
             logger.log(Level.INFO, "Output generated in " + file);
         } catch (Exception e) {
