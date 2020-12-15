@@ -9,7 +9,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 @Data
-public class Cranes implements Iterable<Crane> {
+public class CraneSchedule implements Iterable<Crane> {
     private List<Crane> cranes;
 
     @Override
@@ -28,12 +28,19 @@ public class Cranes implements Iterable<Crane> {
     }
 
     /**
-     *
      * @param c
      * @param coordinate
      * @return true if move could be planned -> state yard changes
      */
-    public boolean canMove(Container c, Coordinate2D coordinate){
+    public static boolean canMove(Container c, Coordinate2D coordinate) {
+
+
         return true;
     }
+
+
+    public void addCrane(Crane crane) {
+        this.cranes.add(crane);
+    }
+
 }

@@ -78,17 +78,22 @@ public class FileManager {
         }
 
         /*  -------------------------------- CRANES -------------------------------- */
+        CraneSchedule craneSchedule = new CraneSchedule();
+        int d = 0;
+
         sc.nextLine();
         for (int i = 0; i < Q; i++) {
             strArr = sc.nextLine().split(",");
             id = Integer.parseInt(strArr[0]);
             x = Integer.parseInt(strArr[1]);
             y = Integer.parseInt(strArr[2]);
-            craneList.add(new Crane(id, x, y));
+            d = Integer.parseInt(strArr[3]);  //delta
 
-
+            craneSchedule.addCrane(new Crane(id, x, y,d));
         }
-        yard.setCraneList(craneList);
+
+
+
 
         /*  -------------------------------- CONTAINERS -------------------------------- */
         sc.nextLine();
@@ -129,10 +134,11 @@ public class FileManager {
             for (String s : printContainers(yard.getRowList())) {
                 pwOut.println(s);
             }
-            pwOut.println("# kraanbewegingen (t,x,y)");
+            //TODO Romeo
+            /*pwOut.println("# kraanbewegingen (t,x,y)");
             for (CraneMovement cm : yard.getCraneList().get(0).getMoves()) {
                 pwOut.println(cm);
-            }
+            }*/
             logger.log(Level.INFO, "Output generated in " + file);
         } catch (Exception e) {
             e.printStackTrace();

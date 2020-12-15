@@ -18,7 +18,7 @@ public class Yard {
     public static int H_SAFE;
 
     private List<Row> rowList;
-    private List<Crane> craneList;
+//    private List<Crane> craneList;
 
     public Yard() {
         this.rowList = new ArrayList<>();
