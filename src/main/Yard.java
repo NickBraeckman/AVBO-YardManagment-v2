@@ -17,8 +17,9 @@ public class Yard {
     public static int L_S, W_S;
     public static int H_SAFE;
 
+    private CraneSchedule craneSchedule;
     private List<Row> rowList;
-    private Cranes cranes;
+//    private List<Crane> craneList;
 
     public Yard() {
         this.rowList = new ArrayList<>();
@@ -35,16 +36,16 @@ public class Yard {
         rowList.add(row);
     }
 
-    public void addContainers(List<Container> containers){
+    public void addContainers(List<Container> containers) {
         StapelOperations operations = new StapelOperations(containers);
-        for (Stapel stapel : operations.getStapels()){
+        for (Stapel stapel : operations.getStapels()) {
             int id = stapel.getUpperContainer().getStartIndex();
             Row row = getRow(id);
             row.addStapel(stapel);
         }
     }
 
-    public Row getRow(int slotId){
+    public Row getRow(int slotId) {
         int id = (int) Math.floor((slotId) / (Yard.L / Yard.L_S));
 
         // extra check last slotId
@@ -60,6 +61,10 @@ public class Yard {
         return "Yard{" +
                 "\n rowList=" + rowList +
                 '}';
+    }
+
+    public void setCraneSchedule(CraneSchedule craneSchedule) {
+        this.craneSchedule = craneSchedule;
     }
 }
 

@@ -3,6 +3,7 @@ package io;
 import comparator.SortContainerByIncreasingHeight;
 import comparator.SortStapelsById;
 import main.*;
+import model.ScheduleState;
 import model.Stapel;
 import move.CraneMovement;
 
@@ -31,7 +32,7 @@ public class FileManager {
         Yard yard;
         Map<Integer, Slot> slots = new HashMap<>();
         List<Container> tempContainers = new ArrayList<>();
-        Cranes craneList = new Cranes();
+        List<Crane> craneList = new ArrayList<>();
         List<Container> containers = new ArrayList<>();
         List<Row> rows = new ArrayList<>();
         List<String> strList;
@@ -78,17 +79,24 @@ public class FileManager {
         }
 
         /*  -------------------------------- CRANES -------------------------------- */
+        CraneSchedule craneSchedule = new CraneSchedule();
+        int d = 0;
+
         sc.nextLine();
         for (int i = 0; i < Q; i++) {
             strArr = sc.nextLine().split(",");
             id = Integer.parseInt(strArr[0]);
             x = Integer.parseInt(strArr[1]);
             y = Integer.parseInt(strArr[2]);
-            craneList.addCrane(new Crane(id, x, y));
+            d = Integer.parseInt(strArr[3]);  //delta
 
-
+            craneSchedule.addCrane(new Crane(id, x, y, d));
         }
-        yard.setCranes(craneList);
+
+        yard.setCraneSchedule(craneSchedule);
+
+
+
 
         /*  -------------------------------- CONTAINERS -------------------------------- */
         sc.nextLine();
@@ -130,9 +138,10 @@ public class FileManager {
                 pwOut.println(s);
             }
             pwOut.println("# kraanbewegingen (t,x,y)");
-            for (CraneMovement cm : yard.getCranes().getCranes().get(0).getMoves()) {
-                pwOut.println(cm);
+            for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
+                pwOut.println(ss); //TODO Romeo
             }
+
             logger.log(Level.INFO, "Output generated in " + file);
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,9 +153,9 @@ public class FileManager {
         List<String> temp = new ArrayList<>();
 
         for (Row row : rows) {
-            Collections.sort(row.getStapels(),new SortStapelsById());
+            Collections.sort(row.getStapels(), new SortStapelsById());
             for (Stapel stapel : row.getStapels()) {
-                Collections.sort(stapel.getContainerList(),new SortContainerByIncreasingHeight());
+                Collections.sort(stapel.getContainerList(), new SortContainerByIncreasingHeight());
                 for (Container container : stapel.getContainerList()) {
                     StringBuilder strb = new StringBuilder();
                     strb.append(container.getId());
