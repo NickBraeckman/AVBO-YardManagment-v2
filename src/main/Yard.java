@@ -6,6 +6,7 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import lombok.Data;
 import model.Stapel;
+import model.StapelOperations;
 
 import java.util.*;
 
@@ -34,8 +35,10 @@ public class Yard {
         rowList.add(row);
     }
 
-    public void addStapels(List<Stapel> stapels){
-        for (Stapel stapel : stapels){
+    public void addContainers(List<Container> containers){
+        StapelOperations operations = new StapelOperations(containers);
+
+        for (Stapel stapel : operations.getStapels()){
             int id = stapel.getUpperContainer().getStartIndex();
             Row row = getRow(id);
             row.addStapel(stapel);

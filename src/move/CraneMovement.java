@@ -9,4 +9,13 @@ public class CraneMovement {
     private final Coordinate2D coordinate;
     private int containerId;
 
+    @Override
+    public String toString() {
+        String part1 = time + "," + coordinate.getX() + "," + coordinate.getY();
+        String part2 = "";
+        if (containerId != -1) {
+            part2 = "," + containerId;
+        }
+        return part1 + part2;
+    }
 }

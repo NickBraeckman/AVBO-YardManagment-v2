@@ -5,12 +5,14 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import lombok.Data;
 import model.Stapel;
+import model.StapelOperations;
 
 import java.util.*;
 
 @Data
 public class Row {
 
+    private StapelOperations stapelOperations;
     private int id;
     private List<Slot> slots;
     List<Stapel> stapels = new ArrayList();
@@ -33,6 +35,7 @@ public class Row {
     public void addStapel(Stapel stapel){
         stapels.add(stapel);
     }
+
 
     @Override
     public String toString() {

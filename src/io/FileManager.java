@@ -1,11 +1,9 @@
 package io;
 
-import comparator.SortContainerById;
 import comparator.SortContainerByIncreasingHeight;
 import comparator.SortStapelsById;
 import main.*;
 import model.Stapel;
-import model.StapelGenerator;
 import move.CraneMovement;
 
 import java.io.File;
@@ -120,9 +118,7 @@ public class FileManager {
             container.setStopIndex(slotIds.get(slotIds.size() - 1));
             tempContainers.add(container);
         }
-        StapelGenerator generator = new StapelGenerator(tempContainers);
-        List<Stapel> stapels = generator.getStapels();
-        yard.addStapels(stapels);
+        yard.addContainers(containers);
         return yard;
     }
 

@@ -6,6 +6,8 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import move.ReorderStrategy;
+import move.Strategy;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,6 +43,9 @@ public class Main extends Application {
 
 
             Yard yard = FileManager.readFile(input);
+            Strategy strategy = new ReorderStrategy();
+            strategy.reorderYard(yard);
+            System.out.println(yard);
             FileManager.writeFile(yard, output);
 
 

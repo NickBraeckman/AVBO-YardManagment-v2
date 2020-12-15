@@ -3,19 +3,22 @@ package model;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import com.sun.xml.internal.fastinfoset.util.QualifiedNameArray;
 import lombok.Data;
 import main.Container;
 
 import java.util.*;
 
 @Data
-public class StapelGenerator {
+public class StapelOperations {
 
     private List<Stapel> stapels;
 
-    public StapelGenerator(List<Container> containers) {
+    public StapelOperations(List<Container> containers) {
         buildAllStapels(containers);
     }
+
+    public StapelOperations(){}
 
     public List<Stapel> getStapels() {
         return stapels;
@@ -61,7 +64,6 @@ public class StapelGenerator {
         // Stack van nodes om kinderen van huidige node bij te houden
         Stack<Container> stack = new Stack<>();
 
-
         for (Container container : graph.nodes()) {
             teller++;
             if (!visited.contains(container)) {
@@ -100,7 +102,6 @@ public class StapelGenerator {
                         }
                     }
                 }
-
                 if (!subGraph.nodes().isEmpty()) {
                     Stapel stapel = new Stapel(teller,containerList);
                     stapel.setContainerGraph(subGraph);
@@ -108,9 +109,19 @@ public class StapelGenerator {
                 }
             }
         }
-
         return containerStapelList;
     }
 
+    public List<Stapel> removeUpperContainer(Stapel stapel){
+        MutableGraph<Container> graph = stapel.getContainerGraph();
+        Container upperContainer = stapel.getUpperContainer();
+        List<Stapel> stapels = new ArrayList<>();
+
+        graph.removeNode(upperContainer);
+        stapel.getContainerList().remove(0);
+
+        stapels = buildAllStapelsHelper(graph);
+        return stapels;
+    }
 
 }
