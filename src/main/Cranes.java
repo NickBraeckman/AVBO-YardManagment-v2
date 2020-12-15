@@ -26,4 +26,14 @@ public class Cranes implements Iterable<Crane> {
     public Spliterator<Crane> spliterator() {
         return null;
     }
+
+    /**
+     *
+     * @param c
+     * @param coordinate
+     * @return true if move could be planned -> state yard changes
+     */
+    public boolean canMove(Container c, Coordinate2D coordinate){
+        return true;
+    }
 }
