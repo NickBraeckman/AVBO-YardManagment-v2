@@ -1,0 +1,66 @@
+<Main>
+    yard.reorderYard();  // loops: while(!isSafe) returns boolean is yard is sorted or not
+    <Yard>
+        (y.a) Container containerToMove = searchYardForContainerToMove();
+            (y.x) for all rows: row.searchRowForContainerToMove();
+                    <Row>
+                        (r.a) for all slots : slot.searchSlotForContainerToMove();
+                            <Slot>
+                                (s.a) check for empty stack
+                                (s.b) get upper container
+                                (s.c) check for hSafe //(VII)
+                                (s.d) check for weight order
+                                    (s.x) set wrong container not safe
+                                    (s.y) return false
+                                (s.e) check for upper weight ==1
+                                (s.f) return null (slot is safe)
+                            </Slot>
+                        (r.b) if (!null) return container
+                        (r.c) else return null (row is safe) //(VI)
+
+                    </Row>
+            (y.y) if (!null && !inlist) return containerToMove
+            (y.z) else return //(VI)
+
+
+        (y.b) containerToMove == null
+            (y.b1) !unableToPlaceContainerList.isEmpty()
+                try 10 times while list is not empty
+                    shuffle list
+                    for list :
+                        (y.b1.1) makeSolutionSpaceAndTryToMove(tempContainer);
+                        (y.b1.2) if temp safe --> it has been moved, so remove from list
+            (y.b2) !unableToPlaceContainerList.isEmpty()
+                 isSafe = false
+            (y.b3) unableToPlaceContainerList.isEmpty()
+                isSafe = true
+
+        (y.c) containerToMove != null
+            (y.c1) findAllowedPlaceAndMove(containerToMove);
+                for all rows do:
+                    (y.i)
+                    (y.j) if not empty return safeSlots
+                (y.k) else return null
+            (y.c2) unableToPlaceContainerList.add(container);
+            (y.c3) moveContainer(container)
+                makeSolutionSpaceAndTryToMove(containerToMove);
+
+    </Yard>
+</Main>
+
+<Yard>
+    makeSolutionSpaceAndTryToMove(container);
+        (y.1) create a new solution space
+        (y.2) makeSolutionSpace(container);
+        (y.3) no possibilities found --> put container in list
+        (y.4) possibility found
+             (y.4.a) try for all possibilities
+                   (y.4.a.1) tryTomove
+                       (y.2.1) move container to new place --> container is set safe !!!
+                       (y.2.2) check for errors in all slots of new place
+                       Container c = slot.searchSlotForContainerToMove() return a container if one is wrong
+                       (y.2.3) if mistake introduced, put back in old place
+                   (y.4.a.2) if moved, then return
+             (y.4.b) not return so not replaced, so add to list
+
+</Yard>
