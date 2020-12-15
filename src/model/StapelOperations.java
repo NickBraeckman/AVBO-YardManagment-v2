@@ -3,6 +3,7 @@ package model;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import comparator.SortContainersByIncreasingLengthAndIncreasingWeight;
 import lombok.Data;
 import main.Container;
 
@@ -124,6 +125,19 @@ public class StapelOperations {
 
         stapels = buildAllStapelsHelper(graph);
         return stapels;
+    }
+
+    public Graph<Container> buildContainerGraph(List<Container> containers){
+        MutableGraph<Container> graph = GraphBuilder.directed().allowsSelfLoops(false).build();
+        return null;
+    }
+
+    public List<Stapel> mergeStapel(Stapel stapel1 , Stapel stapel2){
+        List<Container> containers = new ArrayList<>();
+        containers.addAll(stapel1.getContainerList());
+        containers.addAll(stapel2.getContainerList());
+        Collections.sort(containers, new SortContainersByIncreasingLengthAndIncreasingWeight());
+        return null;
     }
 
 }
