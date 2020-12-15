@@ -13,14 +13,17 @@ import java.util.function.Consumer;
 @Data
 public class CraneSchedule {
     private List<Crane> cranes;
-
-
     private List<ScheduleState> timeline;
 
 
     public CraneSchedule() {
         cranes = new ArrayList<>(2);
     }
+
+
+
+
+
 
     /**
      * @param c
@@ -32,6 +35,17 @@ public class CraneSchedule {
 
         return true;
     }
+    private void addState(int t, Crane crane) {
+        timeline.add(new ScheduleState(t, crane));
+    }
+
+
+
+
+
+
+
+
 
 
     public void addCrane(Crane crane) {
@@ -40,9 +54,5 @@ public class CraneSchedule {
     }
 
 
-    private void addState(int t, Crane crane) {
-
-        timeline.add(new ScheduleState(t, crane));
-    }
 
 }
