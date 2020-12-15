@@ -59,6 +59,6 @@ public class Container implements Comparable<Container>{
 
     @Override
     public String toString() {
-        return String.format("C%d: [%d, %d] height: %d", getId(), getStartIndex(), getStopIndex(), getHeight());
+        return String.format("C%d: [%d, %d] height: %d, weight: %d", getId(), getStartIndex(), getStopIndex(), getHeight(), getGc());
     }
 }

@@ -118,7 +118,7 @@ public class FileManager {
             container.setStopIndex(slotIds.get(slotIds.size() - 1));
             tempContainers.add(container);
         }
-        yard.addContainers(containers);
+        yard.addContainers(tempContainers);
         return yard;
     }
 

@@ -16,7 +16,7 @@ public class ReorderStrategy implements Strategy {
 
         for (Row row : yard.getRowList()){
             for (Stapel stapel : row.getStapels()){
-                if (checkSafetyConstraints(stapel)){
+                if (!checkSafetyConstraints(stapel)){
                     resolutionPool.add(stapel);
                 }
             }

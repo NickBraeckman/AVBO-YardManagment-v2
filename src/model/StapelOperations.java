@@ -106,6 +106,7 @@ public class StapelOperations {
                     Stapel stapel = new Stapel(teller,containerList);
                     stapel.setContainerGraph(subGraph);
                     containerStapelList.add(stapel);
+                    System.out.println(stapel);
                 }
             }
         }
