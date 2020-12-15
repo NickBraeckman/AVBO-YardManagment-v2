@@ -3,7 +3,6 @@ package model;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import com.sun.xml.internal.fastinfoset.util.QualifiedNameArray;
 import lombok.Data;
 import main.Container;
 
@@ -25,6 +24,7 @@ public class StapelOperations {
     }
 
 
+    // enkel voor main
     private void buildAllStapels(List<Container> containers) {
         MutableGraph<Container> containerStack = GraphBuilder.undirected().allowsSelfLoops(false).build();
         for (int i = 0; i < containers.size(); i++) {
@@ -49,6 +49,7 @@ public class StapelOperations {
         this.stapels = buildAllStapelsHelper(containerStack);
     }
 
+    // disconnected component graph to list of connected subgraphs
     private List<Stapel> buildAllStapelsHelper(Graph<Container> graph) {
 
         int teller = 0;
