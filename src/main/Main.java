@@ -44,7 +44,7 @@ public class Main extends Application {
 
             Yard yard = FileManager.readFile(input);
             Strategy strategy = new ReorderStrategy();
-            strategy.reorderYard(yard);
+            //strategy.reorderYard(yard);
             System.out.println(yard);
             FileManager.writeFile(yard, output);
 

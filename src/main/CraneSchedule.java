@@ -3,6 +3,7 @@ package main;
 import lombok.Data;
 import move.CraneMovement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -11,6 +12,11 @@ import java.util.function.Consumer;
 @Data
 public class CraneSchedule implements Iterable<Crane> {
     private List<Crane> cranes;
+
+
+    public CraneSchedule() {
+        cranes = new ArrayList<>(2);
+    }
 
     @Override
     public Iterator<Crane> iterator() {
