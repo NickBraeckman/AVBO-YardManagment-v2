@@ -15,23 +15,20 @@ import java.util.Set;
 @Data
 public class Stapel {
 
-    private int id;
     private List<Container> containerList;
-    private MutableGraph<Container> containerGraph;
+    private MutableGraph<Integer> containerGraph;
     private Container upperContainer;
 
-    public Stapel(int id, List<Container> containers) {
-        this.id = id;
+    public Stapel(List<Container> containers) {
         this.containerList = containers;
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
         containerGraph = GraphBuilder.undirected().allowsSelfLoops(false).build();
         this.upperContainer = containers.get(0);
     }
 
-    public Stapel(Stapel stapel){
-        this.id = stapel.id;
+    public Stapel(Stapel stapel) {
         this.containerList = new ArrayList<>();
-        for (Container container : stapel.getContainerList()){
+        for (Container container : stapel.getContainerList()) {
             containerList.add(new Container(container));
         }
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
@@ -43,14 +40,14 @@ public class Stapel {
         if (container.getLc() == upperContainer.getLc()) {
             container.setHeight(upperContainer.getHeight() + 1);
             containerList.add(container);
-            containerGraph.putEdge(upperContainer, container);
+            containerGraph.putEdge(upperContainer.getId(), container.getId());
             return true;
         }
         return false;
     }
 
-    public boolean checkUpperContainerConstraint(){
-        if (upperContainer.getGc() == 1){
+    public boolean checkUpperContainerConstraint() {
+        if (upperContainer.getGc() == 1) {
             return false;
         }
         return true;
@@ -66,9 +63,9 @@ public class Stapel {
     public boolean checkWeightOrderConstraint() {
         for (Container c : containerList) {
             if (c.getHeight() > 1) {
-                Set<Container> containers = containerGraph.predecessors(c);
-                for (Container predecessor : containers) {
-                    if (predecessor.getGc() > c.getGc()) {
+                Set<Integer> containers = containerGraph.predecessors(c.getId());
+                for (Integer predecessor : containers) {
+                    if (containerList.get(predecessor).getGc() > c.getGc()) {
                         return false;
                     }
                 }

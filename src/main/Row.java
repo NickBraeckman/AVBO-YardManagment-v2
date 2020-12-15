@@ -14,21 +14,21 @@ public class Row {
 
     private StapelOperations stapelOperations;
     private int id;
-    private List<Slot> slots;
+    private Map<Integer,Slot> slots;
     List<Stapel> stapels = new ArrayList();
 
 
     public Row(int id){
         this.id = id;
-        this.slots = new ArrayList<>();
+        this.slots = new HashMap<>();
         this.stapels = new ArrayList<>();
     }
 
     public Row(Row row){
         this.id = row.getId();
-        this.slots = new ArrayList<>();
-        for (Slot slot : row.getSlots()){
-            this.getSlots().add(new Slot(slot));
+        this.slots = new HashMap<>();
+        for (Slot slot : row.getSlots().values()){
+            this.getSlots().put(slot.getId(),new Slot(slot));
         }
     }
 

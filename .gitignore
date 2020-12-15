@@ -1,7 +1,9 @@
 # Project exclude paths
 /out/
 .idea*
-.iml
+.iml*
+FileManager.java
+FileManager.class
 
 FileManager.class
 FileManager.java

@@ -2,6 +2,7 @@ package model;
 
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import comparator.SortContainersByIncreasingLengthAndIncreasingWeight;
 import lombok.Data;
@@ -18,7 +19,8 @@ public class StapelOperations {
         buildAllStapels(containers);
     }
 
-    public StapelOperations(){}
+    public StapelOperations() {
+    }
 
     public List<Stapel> getStapels() {
         return stapels;
@@ -41,6 +43,7 @@ public class StapelOperations {
                         if (!containerStack.hasEdgeConnecting(container1, container2)) {
                             container2.setHeight(container1.getHeight() + 1);
                             containerStack.putEdge(container1, container2);
+                            System.out.println(container1 + " " + container2);
                             break;
                         }
                     }
@@ -52,13 +55,11 @@ public class StapelOperations {
 
     // disconnected component graph to list of connected subgraphs
     private List<Stapel> buildAllStapelsHelper(Graph<Container> graph) {
-
-        int teller = 0;
         List<Stapel> containerStapelList = new ArrayList<>();
 
         // implementeer een graaf-doorloop methode (niet-recursief) die de intervalGraph splitst in een lijst van
         // (niet-gerichte) sub-grafen, waartussen er geen onderlinge verbindingen zijn.
-        MutableGraph<Container> subGraph;
+        MutableGraph<Integer> subGraph;
         List<Container> containerList;
         Container currentContainer;
         Set<Container> visited = new HashSet<>();
@@ -67,10 +68,9 @@ public class StapelOperations {
         Stack<Container> stack = new Stack<>();
 
         for (Container container : graph.nodes()) {
-            teller++;
             if (!visited.contains(container)) {
 
-                subGraph = GraphBuilder.undirected().allowsSelfLoops(false).build();
+                subGraph = GraphBuilder.directed().allowsSelfLoops(false).build();
                 containerList = new ArrayList<>();
                 stack.push(container);
 
@@ -86,7 +86,7 @@ public class StapelOperations {
                     visited.add(currentContainer);
 
                     if (successors.isEmpty()) {
-                        subGraph.addNode(currentContainer);
+                        subGraph.addNode(currentContainer.getId());
                         containerList.add(currentContainer);
                         continue;
                     }
@@ -100,12 +100,12 @@ public class StapelOperations {
                             if (!containerList.contains(currentContainer)) {
                                 containerList.add(currentContainer);
                             }
-                            subGraph.putEdge(currentContainer, c);
+                            subGraph.putEdge(currentContainer.getId(), c.getId());
                         }
                     }
                 }
                 if (!subGraph.nodes().isEmpty()) {
-                    Stapel stapel = new Stapel(teller,containerList);
+                    Stapel stapel = new Stapel(containerList);
                     stapel.setContainerGraph(subGraph);
                     containerStapelList.add(stapel);
                     System.out.println(stapel);
@@ -115,24 +115,46 @@ public class StapelOperations {
         return containerStapelList;
     }
 
-    public List<Stapel> removeUpperContainer(Stapel stapel){
-        MutableGraph<Container> graph = stapel.getContainerGraph();
+    public List<Stapel> removeUpperContainer(Stapel stapel) {
+        MutableGraph<Integer> graph = stapel.getContainerGraph();
         Container upperContainer = stapel.getUpperContainer();
         List<Stapel> stapels = new ArrayList<>();
+        List<Container> tempContainers;
 
-        graph.removeNode(upperContainer);
+        Set<Integer> ids = graph.successors(upperContainer.getId());
+
+        graph.removeNode(upperContainer.getId());
         stapel.getContainerList().remove(0);
 
-        stapels = buildAllStapelsHelper(graph);
+        if (ids.size() > 1) {
+            for (int id : ids) {
+                Set<Integer> nodes = Graphs.reachableNodes(graph, id);
+                for (int node : nodes) {
+                    tempContainers = new ArrayList<>();
+
+                    for (Container container : stapel.getContainerList()) {
+                        if (container.getId() == node) {
+                            tempContainers.add(container);
+                        }
+                    }
+
+                    if (!tempContainers.isEmpty()) {
+                        Stapel tempStapel = new Stapel(tempContainers);
+                        tempStapel.setContainerGraph(Graphs.inducedSubgraph(graph,nodes));
+                        stapels.add(stapel);
+                    }
+                }
+            }
+        }
         return stapels;
     }
 
-    public Graph<Container> buildContainerGraph(List<Container> containers){
+    public Graph<Container> buildContainerGraph(List<Container> containers) {
         MutableGraph<Container> graph = GraphBuilder.directed().allowsSelfLoops(false).build();
         return null;
     }
 
-    public List<Stapel> mergeStapel(Stapel stapel1 , Stapel stapel2){
+    public List<Stapel> mergeStapel(Stapel stapel1, Stapel stapel2) {
         List<Container> containers = new ArrayList<>();
         containers.addAll(stapel1.getContainerList());
         containers.addAll(stapel2.getContainerList());
