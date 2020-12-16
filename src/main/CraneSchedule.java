@@ -79,7 +79,6 @@ public class CraneSchedule {
         switch (determineRouteType()) {
             case 1:
                 System.out.println("Route type 1");
-
                 timeToBeTravelled = deltaX;
                 temp_t = case1(start, stop);
                 break;
@@ -164,6 +163,7 @@ public class CraneSchedule {
      * @param stop
      */
     private int case1(Coordinate2D start, Coordinate2D stop) {
+        //TODO first x,y then x
 
         boolean planned;
         x = start.getX();
@@ -205,7 +205,29 @@ public class CraneSchedule {
      */
     private int case2(Coordinate2D start, Coordinate2D stop) {
 
-        return -2;
+        //TODO first y then x,y
+        boolean planned;
+        x = start.getX();
+        y = start.getY();
+
+
+        int t = time;
+
+        while (t <= time + timeToBeTravelled) {
+            planned = tryMove(t, new Coordinate2D(x, y));
+            // MOVE COULD NOT BE DONE !!! RETURN
+            if (!planned) return t;
+            // INCREASE
+
+
+            x = x + (xFactor);
+            if (y < start.getY() + (deltaY * yFactor)) y = y + (yFactor);
+
+            t++;
+        }
+
+        // All moves could be done
+        return t;
     }
 
     /**
@@ -223,6 +245,7 @@ public class CraneSchedule {
      * @return
      */
     private int case3(Coordinate2D start, Coordinate2D stop) {
+        //TODO first x,y then y
 
         return -3;
     }
