@@ -16,20 +16,13 @@ import java.util.Set;
 public class Stapel {
 
     private List<Container> containerList;
-    private MutableGraph<Integer> graph;
+    private MutableGraph<Container> graph;
     private Container upperContainer;
 
     public Stapel(List<Container> containers) {
         this.containerList = containers;
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
-        graph = GraphBuilder.undirected().allowsSelfLoops(false).build();
-        this.upperContainer = containers.get(0);
-    }
-
-    public Stapel(List<Container> containers, MutableGraph<Integer> graph){
-        this.containerList = containers;
-        Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
-        this.graph = graph;
+        graph = GraphBuilder.directed().allowsSelfLoops(false).build();
         this.upperContainer = containers.get(0);
     }
 
@@ -45,9 +38,9 @@ public class Stapel {
 
     public boolean addContainer(Container container) {
         if (container.getLc() == upperContainer.getLc()) {
-            container.setHeight(upperContainer.getHeight() + 1);
+          //  container.setHeight(upperContainer.getHeight() + 1);
             containerList.add(container);
-            graph.putEdge(upperContainer.getId(), container.getId());
+            graph.putEdge(upperContainer, container);
             return true;
         }
         return false;
@@ -70,9 +63,9 @@ public class Stapel {
     public boolean checkWeightOrderConstraint() {
         for (Container c : containerList) {
             if (c.getHeight() > 1) {
-                Set<Integer> containers = graph.predecessors(c.getId());
-                for (Integer predecessor : containers) {
-                    if (containerList.get(predecessor).getGc() > c.getGc()) {
+                Set<Container> containers = graph.predecessors(c);
+                for (Container predecessor : containers) {
+                    if (predecessor.getGc() > c.getGc()) {
                         return false;
                     }
                 }

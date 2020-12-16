@@ -1,8 +1,6 @@
 package io;
 
-import comparator.SortContainerByIncreasingHeight;
 import main.*;
-import model.Stapel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,7 +68,10 @@ public class FileManager {
                 y = Integer.parseInt(strArr[2]);
                 slot = new Slot(id, x, y);                    // 12
                 slots.put(id, slot);
-                //row.getSlots().add(slot);         //TODO
+                if (j==0){
+                    row.setFirstSlotId(id);
+                }
+                row.getSlots().put(slot.getId(), slot);
             }
             yard.addRow(row);
         }
@@ -92,9 +93,6 @@ public class FileManager {
 
         yard.setCraneSchedule(craneSchedule);
 
-
-
-
         /*  -------------------------------- CONTAINERS -------------------------------- */
         sc.nextLine();
         for (int i = 0; i < C; i++) {
@@ -104,6 +102,7 @@ public class FileManager {
             Gc = Integer.parseInt(strArr[2]);
             containers.add(new Container(id, Lc, Gc));
         }
+
 
         /*  -------------------------------- CONTAINER TO SLOT MAPPING -------------------------------- */
         sc.nextLine();
@@ -118,12 +117,14 @@ public class FileManager {
             }
             id = slotIds.get(0);
             slotIds.remove(0);
-            Container container = containers.get(id - 1);
-            container.setStartIndex(slotIds.get(0));
-            container.setStopIndex(slotIds.get(slotIds.size() - 1));
-            tempContainers.add(container);
+
+            for (Container c :containers){
+                if (c.getId() == id){
+                    yard.getContainers().add(c);
+                    yard.initContainer(c, slotIds);
+                }
+            }
         }
-        yard.addContainers(tempContainers);
         return yard;
     }
 
@@ -131,10 +132,10 @@ public class FileManager {
         try (PrintWriter pwOut = new PrintWriter(file)) {
             logger.log(Level.INFO, "Generating output ...");
             pwOut.println("# container->slots");
-            for (String s : printContainers(yard.getRowList())) {
+            for (String s : printContainers(yard)) {
                 pwOut.println(s);
             }
-        /*    pwOut.println("# kraanbewegingen (t,x,y)");
+            /*pwOut.println("# kraanbewegingen (t,x,y)");
             for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
                 pwOut.println(ss); //TODO Romeo
             }*/
@@ -146,23 +147,17 @@ public class FileManager {
 
     }
 
-    public static List<String> printContainers(List<Row> rows) {
+    public static List<String> printContainers(Yard yard) {
         List<String> temp = new ArrayList<>();
 
-        /*for (Row row : rows) {
-            Collections.sort(row.getStapels(), new SortStapelsById());
-            for (Stapel stapel : row.getStapels()) {
-                Collections.sort(stapel.getContainerList(), new SortContainerByIncreasingHeight());
-                for (Container container : stapel.getContainerList()) {
-                    StringBuilder strb = new StringBuilder();
-                    strb.append(container.getId());
-                    for (int id : container.getSlotIds()) {
-                        strb.append(",").append(id);
-                    }
-                    temp.add(strb.toString());
-                }
+        for (Container container : yard.getContainers()) {
+            StringBuilder strb = new StringBuilder();
+            strb.append(container.getId());
+            for (int id : container.getSlotIds()) {
+                strb.append(",").append(id);
             }
-        }      */
+            temp.add(strb.toString());
+        }
 
         return temp;
     }

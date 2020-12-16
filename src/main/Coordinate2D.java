@@ -8,7 +8,7 @@ import lombok.Data;
 public class Coordinate2D {
     int x, y;
 
-    public Coordinate2D(){
+    public Coordinate2D() {
         this.x = -1;
         this.y = -1;
     }
@@ -28,6 +28,11 @@ public class Coordinate2D {
 
     public String toString() {
         return "(" + x + "," + y + ")";
+    }
+
+
+    public boolean compareOR(Coordinate2D coo1, Coordinate2D coo2) {
+        return this.equals(coo1) || this.equals(coo2);
     }
 
 }

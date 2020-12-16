@@ -1,10 +1,7 @@
 package main;
 
 import lombok.Data;
-import move.CraneMovement;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 public class Crane {

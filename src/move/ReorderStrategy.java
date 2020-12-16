@@ -1,52 +1,92 @@
 package move;
 
 import comparator.SortContainerByIncreasingHeight;
-import comparator.SortContainersByIncreasingLengthAndIncreasingWeight;
-import main.Container;
-import main.Row;
-import main.Yard;
-import model.Stapel;
-import model.StapelOperations;
+import comparator.SortContainerByIncreasingWeight;
+import main.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ReorderStrategy implements Strategy {
 
-    private StapelOperations operations;
-    private List<Stapel> resolutionPool = new ArrayList<>();
-    private List<Stapel> feasiblePool = new ArrayList<>();
+    private List<Container> tempContainerQueue;
+    private Stack<Container> lifoContainerStack;
+    private boolean isSafe = false;
+    private CraneSchedule craneSchedule;
     private List<Row> rows;
+    private List<Container> containers;
+    private Set<Container> resolutionPool;
 
     public ReorderStrategy() {
-        this.operations = new StapelOperations();
+        this.lifoContainerStack = new Stack<>();
+        this.tempContainerQueue = new ArrayList<>();
+        this.rows = new ArrayList<>();
+        this.resolutionPool = new HashSet<>();
+
     }
 
     @Override
     public Yard reorderYard(Yard yard) {
+        this.rows = yard.getRowList();
+        this.craneSchedule = yard.getCraneSchedule();
+        this.containers = yard.getContainers();
+        Container containerToMove;
 
-        for (Row row : yard.getRowList()) {
-            for (Stapel stapel : row.getStapels()) {
-                if (!checkSafetyConstraints(stapel)) {
-                    resolutionPool.add(new Stapel(stapel));
+        while (!isSafe)
+            if (lifoContainerStack.isEmpty()) {
+                containerToMove = searchYardForContainerToMove();
+
+                if (containerToMove == null) {
+                    isSafe = true;
                 }
-                feasiblePool.add(new Stapel(stapel));
+
+                if (!lifoContainerStack.contains(containerToMove)) {
+                    lifoContainerStack.push(containerToMove);
+                }
+            } else {
+                containerToMove = lifoContainerStack.pop();
+                doOperation(containerToMove);
+                System.out.println(lifoContainerStack);
+            }
+        return yard;
+    }
+
+    private Container searchYardForContainerToMove() {
+
+        for (Row row : rows) {
+            for (Slot slot : row.getSlots().values()) {
+                Container containerToMove = null;
+                if (!checkSafetyConstraints(slot)) {
+                    containerToMove = slot.getUpperContainer();
+                }
+
+                if (containerToMove != null) {
+                    return containerToMove;
+                }
             }
         }
-        System.out.println(resolutionPool);
         return null;
     }
 
-    public boolean checkSafetyConstraints(Stapel stapel) {
+    public boolean checkSafetyConstraints(Slot slot) {
 
-        if (!stapel.checkHeightConstraint(Yard.H_SAFE)) {
+        if (!slot.checkHeightConstraint(Yard.H_SAFE)) {
             return false;
         }
-        if (!stapel.checkUpperContainerConstraint()) {
+        if (!slot.checkUpperContainerConstraint()) {
             return false;
         }
-        if (!stapel.checkWeightOrderConstraint()) {
+        if (!slot.checkWeightOrderConstraint()) {
             return false;
+        }
+        return true;
+    }
+
+    public boolean checkSafetyConstraints(Container container) {
+        List<Slot> slots = container.getSlots();
+        for (Slot slot : slots) {
+            if (!checkSafetyConstraints(slot)) {
+                return false;
+            }
         }
         return true;
     }
@@ -66,196 +106,325 @@ public class ReorderStrategy implements Strategy {
         return true;
     }
 
-    public void doOperation(Stapel stapel) {
-
-        if (stapel.getUpperContainer().getGc() == 1) {
-            if (stapel.checkWeightOrderConstraint()) {
-                insertContainer(stapel);
-            } else {
-                placeContainerOnTop(stapel);
+    public void doOperation(Container container) {
+        if (container.getGc() == 1) {
+            if (container.isUpper()) {
+                if (containsHeavierContainer(container)) {
+                    insertContainer(container);
+                } else {
+                    placeContainerOnTop(container);
+                }
             }
         } else {
-            insertContainer(stapel);
+            insertContainer(container);
         }
-
     }
 
-    public void insertContainer(Stapel stapel) {
-        stapel.getContainerList().sort(new SortContainerByIncreasingHeight());
-        List<Integer> slotIds = stapel.getUpperContainer().getSlotIds();
+    public void insertContainer(Container unsafeContainer) {
 
-        for (Container container : stapel.getContainerList()) {
-            placeTemporary(container);
-        }
-        stapel.getContainerList().sort(new SortContainersByIncreasingLengthAndIncreasingWeight());
-        rebuildStapel(stapel, slotIds);
-    }
+        Set<Container> containerSet = new HashSet<>();
+        Set<Container> allContainersSet = new HashSet<>();
+        int rowIndex = unsafeContainer.getRow().getId() - 1;
+        List<Slot> previousSlots = rows.get(rowIndex).getSlots(unsafeContainer.getSlotIds());
 
-    public void placeContainerOnTop(Stapel stapel) {
-
-    }
-
-    public void placeTemporary(Container container) {
-        List<Integer> slotIds = new ArrayList<>();
-        List<Integer> tempSlotIds;
-        int counter;
-
-        // put all slots with containers on it in list
-        for (Row row : rows) {
-            for (Stapel stapel : row.getStapels()) {
-                slotIds.addAll(stapel.getUpperContainer().getSlotIds());
+        for (Slot slot : previousSlots) {
+            if (slot.getContainerStack().size() > 0) {
+                for (int i = slot.getContainerStack().size() - 1; i >= 0; i--) {
+                    Container container = slot.getContainerStack().get(i);
+                    if (!tempContainerQueue.contains(container)) {
+                        allContainersSet.add(container);
+                        if (slot.getContainerStack().get(i).getLc() == unsafeContainer.getLc()) {
+                            containerSet.add(slot.getContainerStack().get(i));
+                        }
+                    }
+                }
             }
+
         }
 
-        // first try to move container on empty place in neighborhood
-        Row curRow = getRow(container.getSlotIds().get(0));
-        List<Integer> place = new ArrayList<>(curRow.getSlots().keySet());
-        place.removeAll(slotIds);
-
-        int teller = 0;
-        placeContainerOnEmptySlots(container, teller, place);
-
-        // try to place container on the other rows
-        List<Row> tempRows = new ArrayList<>(rows);
-        tempRows.remove(curRow);
-        for (Row tempRow : tempRows) {
-            place = new ArrayList<>(tempRow.getSlots().keySet());
-            place.removeAll(slotIds);
-
-            teller = 0;
-            placeContainerOnEmptySlots(container, teller, place);
+        if (containerSet.size() > 1) {
+            tempContainerQueue.addAll(containerSet);
+        } else {
+            tempContainerQueue.addAll(allContainersSet);
         }
 
-        // try to place container on top of another container
-        for (Row row : rows) {
-            for (Stapel stapel : row.getStapels()) {
-                if (checkPhysicalConstraints(container, stapel.getUpperContainer())) {
-                    tempSlotIds = new ArrayList<>(stapel.getUpperContainer().getSlotIds());
-                    placeContainer(container, tempSlotIds);
+        tempContainerQueue.sort(new SortContainerByIncreasingHeight());
+        for (Container container : tempContainerQueue) {
+            if (container.isUpper()) {
+                if (!placeTemporary(container)) {
+                    if (!lifoContainerStack.contains(container)) {
+                        lifoContainerStack.add(container);
+                    }
                     return;
                 }
             }
         }
 
+        tempContainerQueue.sort(new SortContainerByIncreasingWeight());
+        rebuildStack(tempContainerQueue, previousSlots);
     }
 
-    private void placeContainerOnEmptySlots(Container container, int teller, List<Integer> place) {
-        List<Integer> tempSlotIds;
-        tempSlotIds = new ArrayList<>();
+    private boolean placeTemporary(Container container) {
+        List<Slot> slotList;
+        List<Slot> containerSlots = container.getSlots();
+        int counter = 0;
 
-        for (int i = 0; i < place.size() - 1; i++) {
-            if (place.get(i) == place.get(i + 1)) {
-                teller++;
-                tempSlotIds.add(place.get(i));
-            } else {
-                teller = 0;
-                tempSlotIds = new ArrayList<>();
-            }
-            if (teller == container.getLc()) {
-                placeContainer(container, tempSlotIds);
-            }
-        }
-    }
+        for (Row row : rows) {
+            slotList = new ArrayList<>();
+            for (Slot slot : row.getSlots().values()) {
 
-    public void rebuildStapel(Stapel stapel, List<Integer> slotIds) {
+                // place not on the same slots
+                if (!containerSlots.contains(slot)) {
 
-    }
+                    // slot is empty
+                    if (slot.getContainerStack().isEmpty()) {
+                        slotList.add(slot);
+                        counter++;
 
-    public void placeContainer(Container container, List<Integer> slotIds) {
+                        // upper container from slot has same length and Hmax is not exceeded and is ordered on weight
+                    } else if (slot.getUpperContainer().getLc() == container.getLc() && slot.getContainerStack().size() + 1 <= Yard.H_MAX && slot.getUpperContainer().getGc() <= container.getGc()) {
+                        counter = 0;
+                        slotList = new ArrayList<>();
+                        Container tempContainer = slot.getContainerStack().peek();
+                        List<Slot> tempSlots;
+                        tempSlots = tempContainer.getSlots();
+                        slotList.addAll(tempSlots);
+                        if (placeContainer(container, slotList)) {
+                            return true;
+                        }
 
-    }
-
-    public Row getRow(int slotId) {
-        int id = (int) Math.floor((slotId) / (Yard.L / Yard.L_S));
-
-        // extra check last slotId
-        if (id == rows.size()) {
-            id = id - 1;
-        }
-
-        return rows.get(id);
-    }
-
-    /*public boolean reorderHelper(List<Stapel> resolutionPool, List<Stapel> feasiblePool, int row, int slot, int sIndex) {
-
-        Stapel stapel = resolutionPool.get(sIndex);
-
-        if (sIndex == resolutionPool.size() - 1) {
-            reorderHelper(resolutionPool, feasiblePool, row, slot, 0);
-        }
-
-        if (row == rows.size() - 1) {
-            return false;
-        }
-
-        if (slot == rows.get(slot).getSlots().size() - 1) {
-            reorderHelper(resolutionPool, feasiblePool, row + 1, 0, sIndex);
-        }
-
-        if (checkSafetyConstraints(resolutionPool.get(sIndex))) {
-            resolutionPool.remove(stapel);
-            feasiblePool.add(stapel);
-            if (resolutionPool.isEmpty()) {
-                return true;
-            }
-            //TODO returns false?
-            reorderHelper(resolutionPool, feasiblePool, row, slot, sIndex);
-        }
-
-        if (stapel.getUpperContainer().getGc() == 1) {
-
-            if (stapel.getContainerList().size() == 1) {
-                searchContainerInFeasiblePool(resolutionPool, feasiblePool, row, slot, sIndex, stapel);
-            }
-
-            int teller = 0;
-            for (Container c : stapel.getContainerList()) {
-
-                if (c.getLc() == stapel.getUpperContainer().getLc() && c.getGc() > 1) {
-                    Coordinate2D coordinate = rows.get(row).getSlots().get(slot).getCenter();
-                    if (cranes.canMove(stapel.getUpperContainer(), coordinate)) {
-                        c.setCenter(coordinate);
-                        List<Stapel> stapels = operations.removeUpperContainer(stapel);
-                        resolutionPool.remove(stapel);
-                        resolutionPool.addAll(stapels);
-                        reorderHelper(stapels, feasiblePool, row, slot, sIndex);
                     } else {
-                        reorderHelper(resolutionPool, feasiblePool, row, slot + 1, sIndex);
+                        counter = 0;
+                        slotList = new ArrayList<>();
                     }
-                } else {
-                    teller ++;
-                    if (teller == stapel.getContainerList().size() - 1){
-                        searchContainerInFeasiblePool(resolutionPool, feasiblePool, row, slot, sIndex, stapel);
+
+                    // found empty slots that have a matching length
+                    if (counter == (container.getLc() / Yard.L_S)) {
+                        placeContainer(container, slotList);
+                        return true;
                     }
                 }
             }
+        }
+        return false;
+    }
 
+    private void rebuildStack(List<Container> tempContainerQueue, List<Slot> previousSlots) {
+        List<Slot> possibleSlots;
+        List<Slot> possibleEmptySlots;
+        List<Container> placedContainers = new ArrayList<>();
+
+        for (Container container : tempContainerQueue) {
+
+            if (container.isUpper()) {
+                int counter = 0;
+                int emptyCounter = 0;
+                possibleSlots = new ArrayList<>();
+                possibleEmptySlots = new ArrayList<>();
+
+                for (Slot slot : previousSlots) {
+
+                    if (slot.getContainerStack().size() + 1 <= Yard.H_SAFE) {
+
+                        if (slot.getContainerStack().isEmpty()) {
+                            emptyCounter++;
+                            possibleEmptySlots.add(slot);
+
+                        } else if (slot.getContainerStack().peek().getLc() == container.getLc() && slot.getContainerStack().peek().getGc() <= container.getGc()) {
+                            counter = 0;
+                            possibleSlots = new ArrayList<>();
+                            Container tempContainer = slot.getUpperContainer();
+                            List<Slot> tempSlots = tempContainer.getSlots();
+                            if (placeContainer(container, tempSlots)) {
+                                placedContainers.add(container);
+                                break;
+                            }
+
+                        } else if (slot.getContainerStack().peek().getGc() <= container.getGc() && container.getLc() > slot.getContainerStack().peek().getLc()) {
+                            counter++;
+                            possibleSlots.add(slot);
+                        } else {
+                            counter = 0;
+                            emptyCounter = 0;
+                            possibleSlots = new ArrayList<>();
+                            possibleEmptySlots = new ArrayList<>();
+                        }
+                    }
+                    if (counter == (container.getLc() / Yard.L_S)) {
+                        if (placeContainer(container, possibleSlots)) {
+                            placedContainers.add(container);
+                            break;
+                        }
+                    }
+
+                    if (emptyCounter == (container.getLc() / Yard.L_S)) {
+                        if (placeContainer(container, possibleEmptySlots)) {
+                            placedContainers.add(container);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        for (Container placedContainer : placedContainers) {
+            tempContainerQueue.removeIf(container -> container.getId() == placedContainer.getId());
+        }
+        for (Container tempContainer : tempContainerQueue) {
+            if (checkSafetyConstraints(tempContainer)) {
+                lifoContainerStack.removeIf(c -> c.getId() == tempContainer.getId());
+                if (!lifoContainerStack.contains(tempContainer)) {
+                    lifoContainerStack.add(tempContainer);
+                }
+            }
+        }
+        tempContainerQueue = new ArrayList<>();
+    }
+
+
+    public void placeContainerOnTop(Container unsafeContainer) {
+        if (unsafeContainer.getHeight() == Yard.H_MAX) {
+            placeTemporary(unsafeContainer);
+        }
+        List<Container> containers = new ArrayList<>();
+        containers.add(unsafeContainer);
+        placeContainerOnTopHelper(containers, unsafeContainer);
+    }
+
+    private boolean placeContainerOnTopHelper(List<Container> connectingContainers, Container unsafeContainer) {
+
+        if (unsafeContainer.getSlotIds().isEmpty()) {
+            System.out.println(unsafeContainer);
+        }
+        List<Integer> slotIds = unsafeContainer.getSlotIds();
+        int firstSlotId = slotIds.get(0);
+        int lastSlotId = slotIds.get(slotIds.size() - 1);
+        Row row = unsafeContainer.getRow();
+
+        if (isPlaced(connectingContainers)) {
+            return true;
+        }
+
+        if (firstSlotId != row.getFirstSlotId()) {
+            Container prevContainer = row.getSlots().get(firstSlotId - 1).getUpperContainer();
+            if (getNeighborContainers(connectingContainers, unsafeContainer, prevContainer)) {
+                return true;
+            }
+        }
+        if (lastSlotId != row.getFirstSlotId() + row.getSlots().size() - 1) {
+            Container nextContainer = row.getSlots().get(lastSlotId + 1).getUpperContainer();
+            return getNeighborContainers(connectingContainers, unsafeContainer, nextContainer);
         }
 
         return false;
     }
 
-    private void searchContainerInFeasiblePool(List<Stapel> resolutionPool, List<Stapel> feasiblePool, int row, int slot, int sIndex, Stapel stapel) {
-        for (Stapel feasibleStapel : feasiblePool) {
-            if (feasibleStapel.getUpperContainer().getLc() == stapel.getUpperContainer().getLc()) {
-                if (cranes.canMove(feasibleStapel.getUpperContainer(), stapel.getUpperContainer().getCenter())) {
-                    feasibleStapel.getUpperContainer().setCenter(stapel.getUpperContainer().getCenter());
-                    List<Stapel> tempStapels = operations.removeUpperContainer(feasibleStapel);
-                    feasiblePool.remove(feasibleStapel);
-                    for (Stapel tempStapel : tempStapels) {
-                        if (checkSafetyConstraints(tempStapel)) {
-                            feasiblePool.add(tempStapel);
+    private boolean getNeighborContainers(List<Container> connectingContainers, Container unsafeContainer, Container connectingContainer) {
+        if (!connectingContainers.contains(connectingContainer)) {
+            if (connectingContainer.getId() != unsafeContainer.getId() && connectingContainer.getLc() == unsafeContainer.getLc() && connectingContainer.getHeight() == unsafeContainer.getHeight() && connectingContainer.getGc() <= unsafeContainer.getGc()) {
+                if (isPlaced(connectingContainers)) {
+                    return true;
+                }
+                connectingContainers.add(connectingContainer);
+                placeContainerOnTopHelper(connectingContainers, connectingContainer);
+            }
+        }
+        return false;
+    }
+
+    public boolean containsHeavierContainer(Container unsafeContainer) {
+        List<Slot> slots = unsafeContainer.getSlots();
+        for (Container c : slots.get(0).getContainerStack()) {
+            if (c.getLc() == unsafeContainer.getLc() && c.getGc() > unsafeContainer.getGc()) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    private boolean isPlaced(List<Container> containers) {
+        int length = 0;
+        int weight = 0;
+        for (Container c : containers) {
+            length += c.getLc();
+            weight = Math.max(weight, c.getGc());
+        }
+        Container container = getCounterWeightContainer(containers, length, weight);
+        if (container != null) {
+            List<Slot> slots = new ArrayList<>();
+            for (Container c : containers) {
+                for (Slot slot : c.getSlots()) {
+                    if (!slots.contains(slot)) {
+                        slots.add(slot);
+                    }
+                }
+            }
+            placeContainer(container, slots);
+            return true;
+        }
+        return false;
+    }
+
+    private Container getCounterWeightContainer(List<Container> containers, int Lc, int Gc) {
+
+        for (Container container : this.containers) {
+            if (container.isUpper() && !containers.contains(container)) {
+                if (!containers.contains(container) && container.getGc() > 1 && container.getGc() >= Gc && container.getLc() == Lc) {
+                    for (Slot slot : container.getSlots()) {
+                        if (slot.getSecondLastUpperContainer() != null) {
+                            if (!(slot.getSecondLastUpperContainer().getGc() == 1)) {
+                                return slot.getUpperContainer();
+                            }
                         } else {
-                            resolutionPool.add(tempStapel);
+                            return slot.getUpperContainer();
                         }
                     }
-                    reorderHelper(resolutionPool, feasiblePool, row, slot, sIndex);
-                } else {
-                    reorderHelper(resolutionPool, feasiblePool, row, slot, sIndex + 1);
                 }
             }
         }
-    }*/
+        return null;
+    }
+
+    public Row getRow(Slot slot) {
+        for (Row row : rows) {
+            if (row.getSlot(slot.getId()) != null) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    public boolean placeContainer(Container container, List<Slot> slots) {
+
+        Coordinate2D newCenter = new Coordinate2D(slots.get(0).getCoordinate());
+        int x = newCenter.getX();
+        int y = newCenter.getY();
+        x += container.getLc() / 2;
+        y += Yard.W_S / 2;
+        newCenter.setX(x);
+        newCenter.setY(y);
+
+        if (craneSchedule.canMove(container, newCenter)) {
+            applyChangesToContainer(container, slots);
+            return true;
+        }
+
+        return false;
+    }
 
 
+    private void applyChangesToContainer(Container container, List<Slot> place) {
+        Row oldRow = container.getRow();
+        oldRow.popContainer(container);
+
+        List<Integer> slotIds = new ArrayList<>();
+        for (Slot slot : place) {
+            slotIds.add(slot.getId());
+        }
+
+        Row newRow = getRow(place.get(0));
+
+        newRow.pushContainer(container, slotIds);
+        container.setRow(newRow);
+    }
 }

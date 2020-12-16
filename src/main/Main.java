@@ -40,11 +40,10 @@ public class Main extends Application {
         }
 
         try {
-
-
             Yard yard = FileManager.readFile(input);
+            System.out.println(yard);
             Strategy strategy = new ReorderStrategy();
-            //strategy.reorderYard(yard);
+            strategy.reorderYard(yard);
             System.out.println(yard);
             FileManager.writeFile(yard, output);
 
