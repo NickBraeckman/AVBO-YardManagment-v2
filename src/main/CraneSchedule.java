@@ -51,7 +51,7 @@ public class CraneSchedule {
         Coordinate2D cCoo = container.getCenter();
 
         this.time = 0;//TODO set time on which crane is free
-        this.crane = cranes.get(craneID-1); //TODO get crane
+        this.crane = cranes.get(craneID - 1); //TODO get crane
         this.craneID = crane.getId();
         this.setOtherCrane();
         Coordinate2D craneCoo = timeline.get(time).get(craneID - 1); //TODO get coordinate on current time
@@ -247,15 +247,25 @@ public class CraneSchedule {
         }
 
         //TODO Romeo
-        if (x + deltaHelper > timeline.get(t).get(1).getX()) {
+
+        // collision detection
+        boolean collision = false;
+
+        if (xPositive && craneID == 1) {
+            if (x + deltaHelper > timeline.get(t).get(otherCraneID-1).getX()) collision = true;
+        }
+        if (!xPositive && craneID == 2) {
+            if (x - deltaHelper < timeline.get(t).get(otherCraneID-1).getX()) collision = true;
+        }
+
+        if (collision) {
             printTimeLine();
-            System.out.println("Collisions !!! t:" + t + "current crane" + coordinate2DS1.get(craneID-1) + " other crane" + coordinate2DS1.get(otherCraneID-1));
+            System.out.println("Collisions !!! t:" + t + "current crane" + coordinate2DS1.get(craneID - 1) + " other crane" + coordinate2DS1.get(otherCraneID - 1));
             return false;
         }
+
         timeline.get(t).set(craneID - 1, coo);
         return true;
-
-
     }
 
 
