@@ -29,7 +29,6 @@ public class CraneSchedule {
     public CraneSchedule() {
         cranes = new ArrayList<>(2);
         timeline = new HashMap<>();
-
     }
 
     private void setOtherCrane() {
@@ -52,14 +51,15 @@ public class CraneSchedule {
         this.setOtherCrane();
 
         Coordinate2D craneCoo = timeline.get(time).get(craneID - 1);
+
         int temp = time;
         while (craneCoo.compareOR(yard_min, yard_max)) {
             temp--;
             craneCoo = timeline.get(temp).get(craneID - 1);
         }
 
+        startTime = this.time;
 
-        startTime = time;
 
         if (move(craneCoo, cCoo)) {
             return move(cCoo, place);
@@ -101,14 +101,15 @@ public class CraneSchedule {
         }
 
         if (temp_t <= time + timeToBeTravelled) {
-            System.out.println("Error on time:" + temp_t);
-            Coordinate2D coo = timeline.get(startTime).get(craneID - 1);
+            //ystem.out.println("Error on time:" + temp_t);
+
+            Coordinate2D coo;
+            if (craneID == 1) coo = yard_min;
+            else coo = yard_max;
 
             while (temp_t > startTime) {
 
-
                 timeline.get(temp_t).set(craneID - 1, coo);
-
                 temp_t--;
             }
 
@@ -233,7 +234,9 @@ public class CraneSchedule {
         if (timeline.containsKey(t)) {
             if (coordinate2DS1.get(craneID - 1) != null) {
                 if (!coordinate2DS1.get(craneID - 1).compareOR(yard_min, yard_max)) {
-                    System.out.println("Error t:" + t + " currCoo:" + coo + " timeline:" + coordinate2DS1.get(craneID - 1));
+                    if (!(coordinate2DS1.get(craneID - 1).equals(coo))) {
+                        System.out.println("Error t:" + t + " currCoo:" + coo + " timeline:" + coordinate2DS1.get(craneID - 1));
+                    }
                 }
             }
         } else {
@@ -247,6 +250,8 @@ public class CraneSchedule {
         // collision detection
         boolean collision = false;
 
+        timeline.get(t).set(craneID - 1, coo);
+
         if (xPositive && craneID == 1) {
             if (x + deltaHelper > timeline.get(t).get(otherCraneID - 1).getX()) collision = true;
         }
@@ -255,12 +260,12 @@ public class CraneSchedule {
         }
 
         if (collision) {
+            System.out.println("Collisions !!! t:" + t + " current crane" + coordinate2DS1.get(craneID - 1) + " other crane" + coordinate2DS1.get(otherCraneID - 1));
             printTimeLine();
-            System.out.println("Collisions !!! t:" + t + "current crane" + coordinate2DS1.get(craneID - 1) + " other crane" + coordinate2DS1.get(otherCraneID - 1));
             return false;
         }
 
-        timeline.get(t).set(craneID - 1, coo);
+
         return true;
     }
 
