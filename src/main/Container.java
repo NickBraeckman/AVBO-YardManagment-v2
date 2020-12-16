@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Container implements Comparable<Container>{
+public class Container{
 
     private int id;
     private int Lc, Gc, Wc;
@@ -56,15 +56,6 @@ public class Container implements Comparable<Container>{
         this.startIndex = coordinate.x - getWc()/2;
         this.stopIndex = coordinate.x + getWc()/2;
         this.center = coordinate;
-    }
-
-    @Override
-    public int compareTo(Container o) {
-        if (this.getHeight() > o.getHeight()){
-            return -1;
-        } else {
-            return (this.getHeight() == o.getHeight()) ? 0 : 1;
-        }
     }
 
     @Override

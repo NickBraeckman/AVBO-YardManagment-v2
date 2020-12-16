@@ -37,8 +37,8 @@ public class Yard {
     }
 
     public void addContainers(List<Container> containers) {
-        StapelOperations operations = new StapelOperations(containers);
-        for (Stapel stapel : operations.getStapels()) {
+        StapelOperations operations = new StapelOperations();
+        for (Stapel stapel : operations.getStapels(containers)) {
             int id = stapel.getUpperContainer().getStartIndex();
             Row row = getRow(id);
             row.addStapel(stapel);

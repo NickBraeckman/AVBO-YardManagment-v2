@@ -16,13 +16,20 @@ import java.util.Set;
 public class Stapel {
 
     private List<Container> containerList;
-    private MutableGraph<Integer> containerGraph;
+    private MutableGraph<Integer> graph;
     private Container upperContainer;
 
     public Stapel(List<Container> containers) {
         this.containerList = containers;
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
-        containerGraph = GraphBuilder.undirected().allowsSelfLoops(false).build();
+        graph = GraphBuilder.undirected().allowsSelfLoops(false).build();
+        this.upperContainer = containers.get(0);
+    }
+
+    public Stapel(List<Container> containers, MutableGraph<Integer> graph){
+        this.containerList = containers;
+        Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
+        this.graph = graph;
         this.upperContainer = containers.get(0);
     }
 
@@ -33,14 +40,14 @@ public class Stapel {
         }
         Collections.sort(this.containerList, new SortContainerByDecreasingHeight());
         this.upperContainer = new Container(stapel.getUpperContainer());
-        this.containerGraph = Graphs.copyOf(stapel.getContainerGraph());
+        this.graph = Graphs.copyOf(stapel.getGraph());
     }
 
     public boolean addContainer(Container container) {
         if (container.getLc() == upperContainer.getLc()) {
             container.setHeight(upperContainer.getHeight() + 1);
             containerList.add(container);
-            containerGraph.putEdge(upperContainer.getId(), container.getId());
+            graph.putEdge(upperContainer.getId(), container.getId());
             return true;
         }
         return false;
@@ -63,7 +70,7 @@ public class Stapel {
     public boolean checkWeightOrderConstraint() {
         for (Container c : containerList) {
             if (c.getHeight() > 1) {
-                Set<Integer> containers = containerGraph.predecessors(c.getId());
+                Set<Integer> containers = graph.predecessors(c.getId());
                 for (Integer predecessor : containers) {
                     if (containerList.get(predecessor).getGc() > c.getGc()) {
                         return false;
@@ -78,7 +85,7 @@ public class Stapel {
     public String toString() {
         return "\n Stapel{" +
                 "containerList=" + containerList +
-                ", containerGraph=" + containerGraph +
+                ", containerGraph=" + graph +
                 ", upperContainer=" + upperContainer +
                 '}';
     }
