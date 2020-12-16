@@ -47,12 +47,16 @@ public class CraneSchedule {
 
         this.time = 0;//TODO set time on which crane is free
         this.crane = cranes.get(q - 1); //TODO get crane
+
+
         this.craneID = crane.getId();
         this.setOtherCrane();
 
-        Coordinate2D craneCoo = timeline.get(time).get(craneID - 1);
+        Coordinate2D craneCoo = timeline.get(this.time).get(craneID - 1);
 
         int temp = time;
+
+
         while (craneCoo.compareOR(yard_min, yard_max)) {
             temp--;
             craneCoo = timeline.get(temp).get(craneID - 1);
@@ -99,7 +103,7 @@ public class CraneSchedule {
                 break;
         }
 
-        if (temp_t <= time + timeToBeTravelled) {
+        if (temp_t < time + timeToBeTravelled) {
             //ystem.out.println("Error on time:" + temp_t);
 
             Coordinate2D coo;
@@ -164,29 +168,30 @@ public class CraneSchedule {
      */
     private int case1(Coordinate2D start, Coordinate2D stop) {
         //TODO first x,y then x
-
         boolean planned;
         x = start.getX();
         y = start.getY();
 
+        int t0, t1, t2;
+        t0 = time;
+        t1 = time + deltaY;
+        t2 = time + deltaX;
 
-        int t = time;
 
-        while (t <= time + timeToBeTravelled) {
+        for (int t = t0; t < t1; t++) {
             planned = tryMove(t, new Coordinate2D(x, y));
-            // MOVE COULD NOT BE DONE !!! RETURN
             if (!planned) return t;
-            // INCREASE
-
-
             x = x + (xFactor);
-            if (y < start.getY() + (deltaY * yFactor)) y = y + (yFactor);
-
-            t++;
+            y = y + (yFactor);
+        }
+        for (int t = t1; t < t2; t++) {
+            planned = tryMove(t, new Coordinate2D(x, y));
+            if (!planned) return t;
+            x = x + (xFactor);
         }
 
         // All moves could be done
-        return t;
+        return t2;
     }
 
     /**

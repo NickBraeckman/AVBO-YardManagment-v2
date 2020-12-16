@@ -6,13 +6,13 @@ public class Test {
     public static void main(String[] args) {
 
         /* -------------------- CASE 1 -------------------- */
-//        q1_rechts_case1(0);
-//        q1_links_case1(0);
-//        q2_rechts_case1(0);
-//        q2_links_case1(0);
+        q1_rechts_case1(0);
+        q1_links_case1(0);
+        q2_rechts_case1(0);
+        q2_links_case1(0);
 
-//         test1();
-//         test2();
+         test1();
+         test2();
          test3();
     }
 
