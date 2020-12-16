@@ -138,10 +138,6 @@ public class FileManager {
 
             pwOut.println("# kraanbewegingen (t,x,y)");
             pwOut.println(yard.getCraneSchedule().getPlanning());
-        /*  pwOut.println("# kraanbewegingen (t,x,y)");
-            for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
-                pwOut.println(ss); //TODO Romeo
-            }*/
 
             logger.log(Level.INFO, "Output generated in " + file);
         } catch (Exception e) {
