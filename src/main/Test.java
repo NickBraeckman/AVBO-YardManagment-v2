@@ -14,9 +14,9 @@ public class Test {
 
         q1_rechts_case1();
         q1_links_case1();
-//        q2_rechts_case1();
-//        q2_links_case1();
-//
+        q2_rechts_case1();
+        q2_links_case1();
+
 //        test1();
 //        test2();
 //        test3();
@@ -33,12 +33,11 @@ public class Test {
         System.out.println("------------------------ q1_rechts_case1 ------------------------");
 
 //        cs.addCrane(new Crane(1, 0, 0, 2));
-//        cs.addCrane(new Crane(2, 9, 6, 2)); //collision for (8,0)
+//        cs.addCrane(new Crane(2, 9, 6, 2));
 
         time++;
         Coordinate2D q1 = new Coordinate2D(0, 0);
-        Coordinate2D q2 = new Coordinate2D(9, 6);
-
+        Coordinate2D q2 = new Coordinate2D(9, 6);//collision for (8,0)
         cs.moveCranes(q1, q2);
 
 
@@ -64,7 +63,6 @@ public class Test {
         time++;
         Coordinate2D q1 = new Coordinate2D(6, 0);
         Coordinate2D q2 = new Coordinate2D(9, 6);
-
         cs.moveCranes(q1, q2);
 
         Container c = new Container(1, 1, 1);
@@ -80,9 +78,14 @@ public class Test {
 
     private static void q2_rechts_case1() {
         System.out.println("------------------------ q2_rechts_case1 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 6, 2));
-        cs.addCrane(new Crane(2, 3, 0, 2));
+
+//        cs.addCrane(new Crane(1, 0, 6, 2));
+//        cs.addCrane(new Crane(2, 3, 0, 2));
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 6);
+        Coordinate2D q2 = new Coordinate2D(3, 0);
+        cs.moveCranes(q1, q2);
 
 
         Container c = new Container(1, 1, 1);
@@ -99,9 +102,13 @@ public class Test {
     private static void q2_links_case1() {
         System.out.println("------------------------ q2_links_case1 ------------------------");
 
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 6, 2));//collision for ( 1, 6)
-        cs.addCrane(new Crane(2, 9, 0, 2));
+//        cs.addCrane(new Crane(1, 0, 6, 2));
+//        cs.addCrane(new Crane(2, 9, 0, 2));
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 6);//collision for ( 1, 6)
+        Coordinate2D q2 = new Coordinate2D(9, 0);
+        cs.moveCranes(q1, q2);
 
 
         Container c = new Container(1, 1, 1);
@@ -117,9 +124,14 @@ public class Test {
 
     private static void q1c2() {
         System.out.println("------------------------ q1c2 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 8, 6, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 8, 6, 2));
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(8, 6);
+        cs.moveCranes(q1, q2);
+
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(3, 2));
@@ -134,9 +146,14 @@ public class Test {
 
     private static void q1c3() {
         System.out.println("------------------------ q1c3 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 8, 6, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 8, 6, 2));
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(8, 6);
+        cs.moveCranes(q1, q2);
+
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(3, 2));
@@ -153,9 +170,15 @@ public class Test {
 
     private static void q2c2() {
         System.out.println("------------------------ q2c2 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 8, 0, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 8, 0, 2));
+
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(8, 0);
+        cs.moveCranes(q1, q2);
+
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(5, 2));
@@ -170,9 +193,16 @@ public class Test {
 
     private static void q2c3() {
         System.out.println("------------------------ q2c3 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 8, 0, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 8, 0, 2));
+
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(8, 0);
+        cs.moveCranes(q1, q2);
+
+
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(5, 2));
@@ -187,9 +217,15 @@ public class Test {
 
     private static void test1() {
         System.out.println("------------------------ TEST1 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 3, 0, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 3, 0, 2));
+
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(3, 0);
+        cs.moveCranes(q1, q2);
+
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(3, 2));
@@ -215,9 +251,14 @@ public class Test {
 
     private static void test2() {
         System.out.println("------------------------ TEST2 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 6, 0, 2));
-        cs.addCrane(new Crane(2, 9, 0, 2));
+//        cs.addCrane(new Crane(1, 6, 0, 2));
+//        cs.addCrane(new Crane(2, 9, 0, 2));
+
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(6, 0);
+        Coordinate2D q2 = new Coordinate2D(9, 0);
+        cs.moveCranes(q1, q2);
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(3, 3));
@@ -243,9 +284,14 @@ public class Test {
 
     private static void test3() {
         System.out.println("------------------------ TEST3 ------------------------");
-        CraneSchedule cs = new CraneSchedule();
-        cs.addCrane(new Crane(1, 0, 0, 2));
-        cs.addCrane(new Crane(2, 9, 0, 2));
+//        cs.addCrane(new Crane(1, 0, 0, 2));
+//        cs.addCrane(new Crane(2, 9, 0, 2));
+
+
+        time++;
+        Coordinate2D q1 = new Coordinate2D(0, 0);
+        Coordinate2D q2 = new Coordinate2D(9, 0);
+        cs.moveCranes(q1, q2);
 
         Container c1 = new Container(1, 1, 1);
         c1.setCenter(new Coordinate2D(3, 2));
