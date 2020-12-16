@@ -24,7 +24,7 @@ public class CraneSchedule {
     private int startTime = 0;
 
     Coordinate2D yard_min = new Coordinate2D(-1, 0);
-    Coordinate2D yard_max = new Coordinate2D(10, 0);
+    Coordinate2D yard_max = new Coordinate2D(13, 0);
 
 
     public CraneSchedule() {
@@ -44,20 +44,14 @@ public class CraneSchedule {
      * @return true if move could be planned -> state yard changes
      */
     public boolean canMove(Container container, Coordinate2D place, int q) {
-
         Coordinate2D cCoo = container.getCenter();
-
         this.crane = cranes.get(q - 1); //TODO get crane
-
-
         this.craneID = crane.getId();
         this.setOtherCrane();
 
-        Coordinate2D craneCoo = timeline.get(this.time).get(craneID - 1);
+        Coordinate2D craneCoo = timeline.get(time).get(craneID - 1);
 
         int temp = time;
-
-
         while (craneCoo.compareOR(yard_min, yard_max)) {
             temp--;
             craneCoo = timeline.get(temp).get(craneID - 1);
@@ -126,7 +120,6 @@ public class CraneSchedule {
         }
 
         this.time += timeToBeTravelled;
-        Test.time = this.time;
         return true;
 
     }
