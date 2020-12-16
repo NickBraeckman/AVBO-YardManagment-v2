@@ -406,14 +406,15 @@ public class ReorderStrategy implements Strategy {
 
         Random random = new Random();
         int i = random.nextInt();
-        int q =0;
-        if (i < 0.5){
-            q=1;
+        int q = 0;
+        if (i < 0.5) {
+            q = 1;
         } else {
-            q=2;
+            q = 2;
         }
-        if (craneSchedule.canMove(container, newCenter,q)) {
+        if (craneSchedule.canMove(container, newCenter, q)) {
             applyChangesToContainer(container, slots);
+            System.out.println("t:" + CraneSchedule.time + " c:" + container);
             return true;
         }
 

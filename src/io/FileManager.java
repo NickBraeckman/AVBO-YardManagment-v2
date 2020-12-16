@@ -70,7 +70,7 @@ public class FileManager {
                 y = Integer.parseInt(strArr[2]);
                 slot = new Slot(id, x, y);                    // 12
                 slots.put(id, slot);
-                if (j==0){
+                if (j == 0) {
                     row.setFirstSlotId(id);
                 }
                 row.getSlots().put(slot.getId(), slot);
@@ -122,8 +122,8 @@ public class FileManager {
             id = slotIds.get(0);
             slotIds.remove(0);
 
-            for (Container c :containers){
-                if (c.getId() == id){
+            for (Container c : containers) {
+                if (c.getId() == id) {
                     yard.getContainers().add(c);
                     yard.initContainer(c, slotIds);
                 }
@@ -135,10 +135,9 @@ public class FileManager {
     public static void writeFile(Yard yard, File file) {
         try (PrintWriter pwOut = new PrintWriter(file)) {
             logger.log(Level.INFO, "Generating output ...");
-            pwOut.println("# container->slots");
-            for (String s : printContainers(yard)) {
-                pwOut.println(s);
-            }
+
+            pwOut.println("# kraanbewegingen (t,x,y)");
+            pwOut.println(yard.getCraneSchedule().getPlanning());
         /*  pwOut.println("# kraanbewegingen (t,x,y)");
             for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
                 pwOut.println(ss); //TODO Romeo

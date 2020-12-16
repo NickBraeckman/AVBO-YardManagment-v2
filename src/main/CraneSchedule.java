@@ -1,5 +1,6 @@
 package main;
 
+import comparator.MoveComparator;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -30,12 +31,15 @@ public class CraneSchedule {
     Coordinate2D yard_min = new Coordinate2D(-1, 0);
     Coordinate2D yard_max = new Coordinate2D(Yard.L + 1, 0);
 
+    private List<CraneMove> moves;
+
 
     public CraneSchedule() {
         logger.setLevel(Level.OFF);
         cranes = new ArrayList<>(2);
         timeline = new HashMap<>();
-        this.time = 0;
+        time = 0;
+        moves = new ArrayList<>();
     }
 
     private void setOtherCrane() {
@@ -50,7 +54,7 @@ public class CraneSchedule {
      */
     public boolean canMove(Container container, Coordinate2D place, int q) {
         Coordinate2D cCoo = container.getCenter();
-        this.crane = cranes.get(q - 1); //TODO get crane
+        this.crane = cranes.get(q - 1);
         this.craneID = crane.getId();
         this.setOtherCrane();
 
@@ -64,15 +68,35 @@ public class CraneSchedule {
 
         startTime = this.time;
 
-
+        CraneMove m1, m2, m3, m4;
         if (move(craneCoo, cCoo)) {
-            //pickup time
+
+            // PRINT OUT BEFORE PICKING UP
+            m1 = new CraneMove(time, crane.getId(), cCoo.getX(), cCoo.getY(), container.getId());
+            // PICK UP
             addDropAndPickUpTimeState(crane);
+            // PRINT OUT AFTER PICKING UP
+            m2 = new CraneMove(time, crane.getId(), cCoo.getX(), cCoo.getY());
+
+
             boolean b = move(cCoo, place);
             //drop time
             if (b) {
+                // PRINT OUT BEFORE DROPPING UP
+                m3 = new CraneMove(time, crane.getId(), place.getX(), place.getY(), container.getId());
+                // PICK UP
                 addDropAndPickUpTimeState(crane);
+                // PRINT OUT AFTER DROPPING UP
+                m4 = new CraneMove(time, crane.getId(), place.getX(), place.getY());
+
+
+                moves.add(m1);
+                moves.add(m2);
+                moves.add(m3);
+                moves.add(m4);
             }
+
+
             printTimeLine();
             return b;
         } else
@@ -360,14 +384,22 @@ public class CraneSchedule {
     public void addCrane(Crane crane) {
         this.cranes.add(crane);
         addState(0, crane, crane.getStartCoordinate());
+
+        moves.add(new CraneMove(time, crane.getId(), crane.getStartCoordinate().getX(), crane.getStartCoordinate().getY()));
+
     }
 
-    public void moveCranes(Coordinate2D q1, Coordinate2D q2) {
-        addState(time, cranes.get(0), q1);
-        System.out.println(time + " q:1" + q1);
-        addState(time, cranes.get(1), q2);
-        System.out.println(time + " q:2" + q2);
+    public String getPlanning() {
+        StringBuilder sb = new StringBuilder();
 
+        moves.sort(new MoveComparator());
+
+        for (CraneMove cm : moves) {
+            sb.append(cm).append("\n");
+        }
+
+
+        return sb.toString();
     }
 
     public void printTimeLine() {
