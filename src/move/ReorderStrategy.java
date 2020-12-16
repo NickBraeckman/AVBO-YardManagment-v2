@@ -45,8 +45,8 @@ public class ReorderStrategy implements Strategy {
             } else {
                 containerToMove = lifoContainerStack.pop();
                 doOperation(containerToMove);
-                System.out.println(lifoContainerStack);
             }
+        craneSchedule.printTimeLine();
         return yard;
     }
 
@@ -404,7 +404,15 @@ public class ReorderStrategy implements Strategy {
         newCenter.setX(x);
         newCenter.setY(y);
 
-        if (craneSchedule.canMove(container, newCenter)) {
+        Random random = new Random();
+        int i = random.nextInt();
+        int q =0;
+        if (i < 0.5){
+            q=1;
+        } else {
+            q=2;
+        }
+        if (craneSchedule.canMove(container, newCenter,q)) {
             applyChangesToContainer(container, slots);
             return true;
         }

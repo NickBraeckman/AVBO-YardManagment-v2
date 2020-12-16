@@ -2,7 +2,11 @@ package main;
 
 import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Data
@@ -24,10 +28,11 @@ public class CraneSchedule {
     private int startTime = 0;
 
     Coordinate2D yard_min = new Coordinate2D(-1, 0);
-    Coordinate2D yard_max = new Coordinate2D(13, 0);
+    Coordinate2D yard_max = new Coordinate2D(Yard.L + 1, 0);
 
 
     public CraneSchedule() {
+        logger.setLevel(Level.OFF);
         cranes = new ArrayList<>(2);
         timeline = new HashMap<>();
         this.time = 0;
@@ -61,11 +66,17 @@ public class CraneSchedule {
 
 
         if (move(craneCoo, cCoo)) {
-            //TODO pickup time
+            //pickup time
+            addDropAndPickUpTimeState(crane);
             boolean b = move(cCoo, place);
-            //TODO droptime
+            //drop time
+            if (b) {
+                addDropAndPickUpTimeState(crane);
+            }
+            printTimeLine();
             return b;
-        } else return false;
+        } else
+            return false;
     }
 
     private boolean move(Coordinate2D start, Coordinate2D stop) {
@@ -80,18 +91,15 @@ public class CraneSchedule {
 
         switch (determineRouteType()) {
             case 1:
-                System.out.println("Route type 1");
                 timeToBeTravelled = deltaX;
                 temp_t = case1(start, stop);
                 break;
             case 2:
-                System.out.println("Route type 2");
 
                 timeToBeTravelled = deltaY;
                 temp_t = case2(start, stop);
                 break;
             case 3:
-                System.out.println("Route type 3");
 
                 timeToBeTravelled = deltaY;
                 temp_t = case3(start, stop);
@@ -149,7 +157,7 @@ public class CraneSchedule {
 
         if (yPositive) yFactor = 1;
         else yFactor = -1;
-        System.out.println();
+
     }
 
     /**
@@ -173,7 +181,7 @@ public class CraneSchedule {
         int t0, t1, t2;
         t0 = time;
         t1 = time + deltaY;
-        t2 = time + deltaX+1;
+        t2 = time + deltaX + 1;
 
         for (int t = t0; t < t1; t++) {
             planned = tryMove(t, new Coordinate2D(x, y));
@@ -301,10 +309,14 @@ public class CraneSchedule {
         timeline.get(t).set(craneID - 1, coo);
 
         if (xPositive && craneID == 1) {
-            if (x + deltaHelper > timeline.get(t).get(otherCraneID - 1).getX()) collision = true;
+            if (x + cranes.get(craneID - 1).getDelta() > timeline.get(t).get(otherCraneID - 1).getX()) {
+                collision = true;
+            }
         }
         if (!xPositive && craneID == 2) {
-            if (x - deltaHelper < timeline.get(t).get(otherCraneID - 1).getX()) collision = true;
+            if (x - cranes.get(craneID - 1).getDelta() < timeline.get(t).get(otherCraneID - 1).getX()) {
+                collision = true;
+            }
         }
 
         if (collision) {
@@ -317,6 +329,20 @@ public class CraneSchedule {
         return true;
     }
 
+
+    private void addDropAndPickUpTimeState(Crane q) {
+
+        for (int i = 0; i < Crane.DROP_TIME; i++) {
+            time++;
+            if (timeline.get(time) == null) {
+                timeline.put(time, new ArrayList<>());
+                Coordinate2D prev = timeline.get(time - 1).get(0);
+                timeline.get(time).add(prev);
+                prev = timeline.get(time - 1).get(1);
+                timeline.get(time).add(prev);
+            }
+        }
+    }
 
     private void addState(int t, Crane q, Coordinate2D coo) {
 
@@ -335,11 +361,12 @@ public class CraneSchedule {
         this.cranes.add(crane);
         addState(0, crane, crane.getStartCoordinate());
     }
-    public void moveCranes(Coordinate2D q1, Coordinate2D q2){
+
+    public void moveCranes(Coordinate2D q1, Coordinate2D q2) {
         addState(time, cranes.get(0), q1);
-        System.out.println(time+" q:1"+q1);
+        System.out.println(time + " q:1" + q1);
         addState(time, cranes.get(1), q2);
-        System.out.println(time+" q:2"+q2);
+        System.out.println(time + " q:2" + q2);
 
     }
 
@@ -357,7 +384,7 @@ public class CraneSchedule {
             sb.append("t").append(t);
             sb.append("\t q1:").append(couple.get(0));
             sb.append("\t q2:").append(couple.get(1));
-            System.out.println(sb.toString());
+            //System.out.println(sb.toString());
             t++;
         }
     }
