@@ -2,10 +2,7 @@ package main;
 
 
 import io.FileManager;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import move.ReorderStrategy;
 import move.Strategy;
 
@@ -14,42 +11,30 @@ import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Main extends Application {
+public class Main {
 
-    private File input;
-    private File output;
+    private static File inputFile;
+    private static File outputFile;
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
+
+
     public static void main(String[] args) {
-        launch();
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir") + "/files"));
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Input files", "*.ysi"));
-        File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
-        if (selectedFile != null) {
-            input = selectedFile;
-            output = new File(input.getPath().split("\\.")[0] + ".yso");
-        }
+        inputFile = new File(args[0]);
+        outputFile = new File(args[1]);
 
         try {
-            Yard yard = FileManager.readFile(input);
-            System.out.println(yard);
+            Yard yard = FileManager.readFile(inputFile);
+            //System.out.println(yard);
             Strategy strategy = new ReorderStrategy();
             strategy.reorderYard(yard);
-            System.out.println(yard);
-            FileManager.writeFile(yard, output);
+            //System.out.println(yard);
+            FileManager.writeFile(yard, outputFile);
 
 
         } catch (FileNotFoundException e) {
-            logger.log(Level.WARNING, "Sorry, cannot find file : " + input);
+            logger.log(Level.WARNING, "Sorry, cannot find file : " + inputFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
