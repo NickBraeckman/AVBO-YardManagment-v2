@@ -1,6 +1,8 @@
 package io;
 
+import comparator.SortContainerByIncreasingHeight;
 import main.*;
+import model.Stapel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,6 +95,9 @@ public class FileManager {
 
         yard.setCraneSchedule(craneSchedule);
 
+
+
+
         /*  -------------------------------- CONTAINERS -------------------------------- */
         sc.nextLine();
         for (int i = 0; i < C; i++) {
@@ -102,7 +107,6 @@ public class FileManager {
             Gc = Integer.parseInt(strArr[2]);
             containers.add(new Container(id, Lc, Gc));
         }
-
 
         /*  -------------------------------- CONTAINER TO SLOT MAPPING -------------------------------- */
         sc.nextLine();
@@ -135,7 +139,7 @@ public class FileManager {
             for (String s : printContainers(yard)) {
                 pwOut.println(s);
             }
-            /*pwOut.println("# kraanbewegingen (t,x,y)");
+        /*    pwOut.println("# kraanbewegingen (t,x,y)");
             for (ScheduleState ss : yard.getCraneSchedule().getTimeline()) {
                 pwOut.println(ss); //TODO Romeo
             }*/
