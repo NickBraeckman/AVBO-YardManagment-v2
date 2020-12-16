@@ -1,7 +1,6 @@
 package io;
 
 import comparator.SortContainerByIncreasingHeight;
-import comparator.SortStapelsById;
 import main.*;
 import model.Stapel;
 
@@ -27,7 +26,7 @@ public class FileManager {
         int Lc, Gc, id, x, y;
 
         /*  -------------------------------- PROJECT VARIABLES -------------------------------- */
-        Yard  yard;
+        Yard yard;
         Map<Integer, Slot> slots = new HashMap<>();
         List<Container> tempContainers = new ArrayList<>();
         List<Crane> craneList = new ArrayList<>();
@@ -71,7 +70,7 @@ public class FileManager {
                 y = Integer.parseInt(strArr[2]);
                 slot = new Slot(id, x, y);                    // 12
                 slots.put(id, slot);
-                row.getSlots().add(slot);
+                //row.getSlots().add(slot);         //TODO
             }
             yard.addRow(row);
         }
@@ -150,7 +149,7 @@ public class FileManager {
     public static List<String> printContainers(List<Row> rows) {
         List<String> temp = new ArrayList<>();
 
-        for (Row row : rows) {
+        /*for (Row row : rows) {
             Collections.sort(row.getStapels(), new SortStapelsById());
             for (Stapel stapel : row.getStapels()) {
                 Collections.sort(stapel.getContainerList(), new SortContainerByIncreasingHeight());
@@ -163,7 +162,8 @@ public class FileManager {
                     temp.add(strb.toString());
                 }
             }
-        }
+        }      */
+
         return temp;
     }
 }
