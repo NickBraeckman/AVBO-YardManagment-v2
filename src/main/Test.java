@@ -6,14 +6,90 @@ public class Test {
     public static void main(String[] args) {
 
         /* -------------------- CASE 1 -------------------- */
-        q1_rechts_case1(0);
-        q1_links_case1(0);
-        q2_rechts_case1(0);
-        q2_links_case1(0);
+//        q1_rechts_case1(0);
+//        q1_links_case1(0);
+//        q2_rechts_case1(0);
+//        q2_links_case1(0);
+//
+//         test1();
+//         test2();
+//         test3();
 
-         test1();
-         test2();
-         test3();
+        q1c2();
+//        q1c3();
+        q2c2();
+//        q2c3();
+
+
+    }
+    private static void q1c2() {
+        System.out.println("------------------------ q1c2 ------------------------");
+        CraneSchedule cs = new CraneSchedule();
+        cs.addCrane(new Crane(1, 0, 0, 2));
+        cs.addCrane(new Crane(2, 8, 6, 2));
+
+        Container c1 = new Container(1, 1, 1);
+        c1.setCenter(new Coordinate2D(3, 2));
+
+
+        Coordinate2D place1 = new Coordinate2D(5, 6);
+
+        boolean b = cs.canMove(c1, place1, time, 1);
+
+        if (b) cs.printTimeLine();
+    }
+    private static void q1c3() {
+        System.out.println("------------------------ q1c3 ------------------------");
+        CraneSchedule cs = new CraneSchedule();
+        cs.addCrane(new Crane(1, 0, 0, 2));
+        cs.addCrane(new Crane(2, 8, 6, 2));
+
+        Container c1 = new Container(1, 1, 1);
+        c1.setCenter(new Coordinate2D(3, 2));
+
+
+        Coordinate2D place1 = new Coordinate2D(1, 5);
+
+        boolean b = cs.canMove(c1, place1, time, 1);
+
+        if (b) cs.printTimeLine();
+
+    }
+
+
+
+    private static void q2c2() {
+        System.out.println("------------------------ q2c2 ------------------------");
+        CraneSchedule cs = new CraneSchedule();
+        cs.addCrane(new Crane(1, 0, 0, 2));
+        cs.addCrane(new Crane(2, 8, 0, 2));
+
+        Container c1 = new Container(1, 1, 1);
+        c1.setCenter(new Coordinate2D(5, 2));
+
+
+        Coordinate2D place1 = new Coordinate2D(3, 5);
+
+        boolean b = cs.canMove(c1, place1, time, 2);
+
+        if (b) cs.printTimeLine();
+    }
+
+    private static void q2c3() {
+        System.out.println("------------------------ q2c3 ------------------------");
+        CraneSchedule cs = new CraneSchedule();
+        cs.addCrane(new Crane(1, 0, 0, 2));
+        cs.addCrane(new Crane(2, 8, 0, 2));
+
+        Container c1 = new Container(1, 1, 1);
+        c1.setCenter(new Coordinate2D(5, 2));
+
+
+        Coordinate2D place1 = new Coordinate2D(7, 5);
+
+        boolean b = cs.canMove(c1, place1, time, 2);
+
+        if (b) cs.printTimeLine();
     }
 
     private static void test1() {
@@ -43,6 +119,7 @@ public class Test {
             if (b) cs.printTimeLine();
         }
     }
+
     private static void test2() {
         System.out.println("------------------------ TEST2 ------------------------");
         CraneSchedule cs = new CraneSchedule();
@@ -98,6 +175,7 @@ public class Test {
             if (b) cs.printTimeLine();
         }
     }
+
     private static void q1_rechts_case1(int t) {
         System.out.println("------------------------ q1_rechts_case1 ------------------------");
         CraneSchedule cs = new CraneSchedule();

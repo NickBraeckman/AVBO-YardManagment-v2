@@ -177,7 +177,6 @@ public class CraneSchedule {
         t1 = time + deltaY;
         t2 = time + deltaX;
 
-
         for (int t = t0; t < t1; t++) {
             planned = tryMove(t, new Coordinate2D(x, y));
             if (!planned) return t;
@@ -209,30 +208,31 @@ public class CraneSchedule {
      * @return
      */
     private int case2(Coordinate2D start, Coordinate2D stop) {
-
         //TODO first y then x,y
+
         boolean planned;
         x = start.getX();
         y = start.getY();
 
+        int t0, t1, t2;
+        t0 = time;
+        t1 = time + deltaHelper-1;
+        t2 = time + deltaY+1;
 
-        int t = time;
-
-        while (t <= time + timeToBeTravelled) {
+        for (int t = t0; t < t1; t++) {
             planned = tryMove(t, new Coordinate2D(x, y));
-            // MOVE COULD NOT BE DONE !!! RETURN
             if (!planned) return t;
-            // INCREASE
-
-
+            y = y + (yFactor);
+        }
+        for (int t = t1; t < t2; t++) {
+            planned = tryMove(t, new Coordinate2D(x, y));
+            if (!planned) return t;
             x = x + (xFactor);
-            if (y < start.getY() + (deltaY * yFactor)) y = y + (yFactor);
-
-            t++;
+            y = y + (yFactor);
         }
 
         // All moves could be done
-        return t;
+        return t2;
     }
 
     /**
