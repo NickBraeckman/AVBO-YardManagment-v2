@@ -417,7 +417,7 @@ public class ReorderStrategy implements Strategy {
         }
         if (craneSchedule.canMove(container, newCenter, q)) {
             applyChangesToContainer(container, slots);
-            System.out.println("t:" + CraneSchedule.time + " c:" + container);
+            //System.out.println("t:" + CraneSchedule.time + " c:" + container);
             return true;
         }
 

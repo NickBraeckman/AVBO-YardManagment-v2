@@ -120,13 +120,11 @@ public class StapelOperations {
         return stapels;
     }
 
-    // TODO
     public Graph<Container> buildContainerGraph(List<Container> containers) {
         MutableGraph<Container> graph = GraphBuilder.directed().allowsSelfLoops(false).build();
         return null;
     }
 
-    // TODO
     public List<Stapel> mergeStapel(Stapel stapel1, Stapel stapel2) {
         List<Container> containers = new ArrayList<>();
         containers.addAll(stapel1.getContainerList());

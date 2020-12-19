@@ -197,7 +197,7 @@ public class CraneSchedule {
      * @param stop
      */
     private int case1(Coordinate2D start, Coordinate2D stop) {
-        //TODO first x,y then x
+        // first x,y then x
         boolean planned;
         x = start.getX();
         y = start.getY();
@@ -238,7 +238,7 @@ public class CraneSchedule {
      * @return
      */
     private int case2(Coordinate2D start, Coordinate2D stop) {
-        //TODO first y then x,y
+        // first y then x,y
 
         boolean planned;
         x = start.getX();
@@ -280,7 +280,7 @@ public class CraneSchedule {
      * @return
      */
     private int case3(Coordinate2D start, Coordinate2D stop) {
-        //TODO first x,y then y
+        // first x,y then y
 
         boolean planned;
         x = start.getX();
