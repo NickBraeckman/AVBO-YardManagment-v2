@@ -112,6 +112,8 @@ public class ReorderStrategy implements Strategy {
                 } else {
                     placeContainerOnTop(container);
                 }
+            } else {
+                insertContainer(container);
             }
         } else {
             insertContainer(container);
