@@ -14,13 +14,11 @@ public class ReorderStrategy implements Strategy {
     private CraneSchedule craneSchedule;
     private List<Row> rows;
     private List<Container> containers;
-    private Set<Container> resolutionPool;
 
     public ReorderStrategy() {
         this.lifoContainerStack = new Stack<>();
         this.tempContainerQueue = new ArrayList<>();
         this.rows = new ArrayList<>();
-        this.resolutionPool = new HashSet<>();
 
     }
 
@@ -45,6 +43,7 @@ public class ReorderStrategy implements Strategy {
             } else {
                 containerToMove = lifoContainerStack.pop();
                 doOperation(containerToMove);
+                System.out.println(lifoContainerStack);
             }
         craneSchedule.printTimeLine();
         return yard;
@@ -123,6 +122,7 @@ public class ReorderStrategy implements Strategy {
     public void insertContainer(Container unsafeContainer) {
 
         Set<Container> containerSet = new HashSet<>();
+        Set<Integer> curSlots = new HashSet<>();
         Set<Container> allContainersSet = new HashSet<>();
         int rowIndex = unsafeContainer.getRow().getId() - 1;
         List<Slot> previousSlots = rows.get(rowIndex).getSlots(unsafeContainer.getSlotIds());
@@ -151,11 +151,13 @@ public class ReorderStrategy implements Strategy {
         tempContainerQueue.sort(new SortContainerByIncreasingHeight());
         for (Container container : tempContainerQueue) {
             if (container.isUpper()) {
-                if (!placeTemporary(container)) {
+                if (!placeTemporary(container, curSlots)) {
                     if (!lifoContainerStack.contains(container)) {
                         lifoContainerStack.add(container);
                     }
                     return;
+                } else {
+                    curSlots.addAll(container.getSlotIds());
                 }
             }
         }
@@ -164,7 +166,7 @@ public class ReorderStrategy implements Strategy {
         rebuildStack(tempContainerQueue, previousSlots);
     }
 
-    private boolean placeTemporary(Container container) {
+    private boolean placeTemporary(Container container, Set<Integer> curSlots) {
         List<Slot> slotList;
         List<Slot> containerSlots = container.getSlots();
         int counter = 0;
@@ -177,12 +179,14 @@ public class ReorderStrategy implements Strategy {
                 if (!containerSlots.contains(slot)) {
 
                     // slot is empty
-                    if (slot.getContainerStack().isEmpty()) {
+                    if (slot.getContainerStack().isEmpty() && !curSlots.contains(slot.getId())) {
                         slotList.add(slot);
                         counter++;
 
+                        // upper container is not on same slots of parent container of previous place
                         // upper container from slot has same length and Hmax is not exceeded and is ordered on weight
-                    } else if (slot.getUpperContainer().getLc() == container.getLc() && slot.getContainerStack().size() + 1 <= Yard.H_MAX && slot.getUpperContainer().getGc() <= container.getGc()) {
+                    } else if (!curSlots.contains(slot.getId()) && slot.getUpperContainer().getLc() == container.getLc() && slot.getContainerStack().size() + 1 <= Yard.H_MAX && slot.getUpperContainer().getGc() <= container.getGc()) {
+
                         counter = 0;
                         slotList = new ArrayList<>();
                         Container tempContainer = slot.getContainerStack().peek();
@@ -283,7 +287,7 @@ public class ReorderStrategy implements Strategy {
 
     public void placeContainerOnTop(Container unsafeContainer) {
         if (unsafeContainer.getHeight() == Yard.H_MAX) {
-            placeTemporary(unsafeContainer);
+            placeTemporary(unsafeContainer, new HashSet<>(unsafeContainer.getSlotIds()));
         }
         List<Container> containers = new ArrayList<>();
         containers.add(unsafeContainer);
