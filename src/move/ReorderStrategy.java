@@ -43,7 +43,6 @@ public class ReorderStrategy implements Strategy {
             } else {
                 containerToMove = lifoContainerStack.pop();
                 doOperation(containerToMove);
-                System.out.println(lifoContainerStack);
             }
         craneSchedule.printTimeLine();
         return yard;
