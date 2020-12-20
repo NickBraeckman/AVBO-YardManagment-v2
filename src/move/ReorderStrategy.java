@@ -1,7 +1,7 @@
 package move;
 
 import comparator.SortContainerByHeight;
-import comparator.SortContainerByWeight;
+import comparator.SortContainerByIncreasingWeight;
 import main.*;
 
 import java.util.*;
@@ -163,7 +163,7 @@ public class ReorderStrategy implements Strategy {
             }
         }
 
-        tempContainerQueue.sort(new SortContainerByWeight());
+        tempContainerQueue.sort(new SortContainerByIncreasingWeight());
         rebuildStack(tempContainerQueue, previousSlots);
     }
 
