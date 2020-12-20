@@ -1,8 +1,6 @@
 package io;
 
-import comparator.SortContainerByIncreasingHeight;
 import main.*;
-import model.Stapel;
 
 import java.io.File;
 import java.io.FileNotFoundException;

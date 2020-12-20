@@ -1,7 +1,7 @@
 package move;
 
-import comparator.SortContainerByIncreasingHeight;
-import comparator.SortContainerByIncreasingWeight;
+import comparator.SortContainerByHeight;
+import comparator.SortContainerByWeight;
 import main.*;
 
 import java.util.*;
@@ -149,7 +149,7 @@ public class ReorderStrategy implements Strategy {
             tempContainerQueue.addAll(allContainersSet);
         }
 
-        tempContainerQueue.sort(new SortContainerByIncreasingHeight());
+        tempContainerQueue.sort(new SortContainerByHeight());
         for (Container container : tempContainerQueue) {
             if (container.isUpper()) {
                 if (!placeTemporary(container, curSlots)) {
@@ -163,7 +163,7 @@ public class ReorderStrategy implements Strategy {
             }
         }
 
-        tempContainerQueue.sort(new SortContainerByIncreasingWeight());
+        tempContainerQueue.sort(new SortContainerByWeight());
         rebuildStack(tempContainerQueue, previousSlots);
     }
 
